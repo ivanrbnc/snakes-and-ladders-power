@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import io from 'socket.io-client';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { User } from 'lucide-react';
+import { supabase } from './lib/supabase';
 
 // Sub-components
 import Lobby from './components/lobby/Lobby';
@@ -16,8 +16,7 @@ import WinnerOverlay from './components/game/WinnerOverlay';
 // Constants
 import { FULL_BOARD_EXTRAS, LDR_CARDS } from './constants/gameConstants';
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3001';
-const socket = io(SOCKET_URL);
+// No global socket anymore, we'll create channels per room
 
 function App() {
   const [roomId, setRoomId] = useState('');
@@ -42,6 +41,8 @@ function App() {
   const [rollingValue, setRollingValue] = useState(1);
   const [hasLanded, setHasLanded] = useState(false);
 
+  const channelRef = useRef(null);
+  const myPlayerId = useRef(Math.random().toString(36).substr(2, 9)); // Stable ID for this session
   const roomDataRef = useRef(null);
   const visualPositionsRef = useRef(visualPositions);
 
@@ -55,13 +56,6 @@ function App() {
     setRoomId(id);
   }, []);
 
-  // Check room status when roomId or inRoom changes
-  useEffect(() => {
-    if (roomId && !inRoom) {
-      socket.emit('check_room', { roomId });
-    }
-  }, [roomId, inRoom]);
-
   const addToast = useCallback((msg) => {
     const id = Date.now();
     setToasts(prev => [...prev, { id, msg }]);
@@ -69,6 +63,43 @@ function App() {
       setToasts(prev => prev.filter(t => t.id !== id));
     }, 4000);
   }, []);
+
+  // Check room status when roomId or inRoom changes
+  useEffect(() => {
+    if (roomId && !inRoom) {
+      const checkRoom = async () => {
+        try {
+          const { data, error } = await supabase
+            .from('rooms')
+            .select('id, data')
+            .eq('id', roomId)
+            .maybeSingle();
+
+          if (error) throw error;
+
+          if (data) {
+            const roomDataFromDb = data.data;
+            setRoomStatus({
+              exists: true,
+              count: roomDataFromDb.players.length,
+              maxPlayers: roomDataFromDb.maxPlayers,
+              hasPassword: !!roomDataFromDb.password,
+              waitingPlayer: roomDataFromDb.players[0]?.name
+            });
+          } else {
+            setRoomStatus({ exists: false, count: 0 });
+          }
+        } catch (err) {
+          console.error("Error checking room:", err);
+          // If table doesn't exist, we'll see it here
+          if (err.code === '42P01') {
+            addToast("Supabase Error: 'rooms' table not found. Please check your database setup!");
+          }
+        }
+      };
+      checkRoom();
+    }
+  }, [roomId, inRoom, addToast]);
 
   useEffect(() => {
     roomDataRef.current = roomData;
@@ -78,166 +109,291 @@ function App() {
     visualPositionsRef.current = visualPositions;
   }, [visualPositions]);
 
+  // Subscribe to room updates
   useEffect(() => {
-    socket.on('room_status', (data) => {
-      setRoomStatus(data);
+    if (!roomId || !inRoom) return;
+
+    const channel = supabase.channel(`room:${roomId}`, {
+      config: {
+        presence: {
+          key: playerName,
+        },
+        broadcast: {
+          self: true,
+        },
+      },
     });
 
-    socket.on('room_status_update', (data) => {
-      if (data.roomId === roomId) {
-        setRoomStatus(prev => ({ ...prev, ...data, exists: true }));
-      }
-    });
+    channel
+      .on('presence', { event: 'sync' }, () => {
+        const state = channel.presenceState();
+        // Handle presence if needed
+      })
+      .on('broadcast', { event: 'dice_rolling' }, ({ payload }) => {
+        const { playerId, name, diceValue } = payload;
+        setRollingPlayer(name);
+        setIsRolling(true);
+        setHasLanded(false);
 
-    socket.on('room_update', (data) => {
-      setRoomData(data);
-      setRoomStatus({ count: data.players.length, waitingPlayer: data.players[0]?.name });
+        let startTime = Date.now();
+        const duration = 1500;
+        const interval = setInterval(() => {
+          const elapsed = Date.now() - startTime;
+          if (elapsed < duration - 200) {
+            setRollingValue(Math.floor(Math.random() * 6) + 1);
+          } else {
+            setRollingValue(diceValue);
+            clearInterval(interval);
+          }
+        }, 80);
+      })
+      .on('broadcast', { event: 'dice_rolled' }, async ({ payload }) => {
+        const { diceValue, playerId, name, newPosition, isSpecial, specialType, nextTurn, loveCard } = payload;
 
-      // Securely enter room only if server confirms our ID is in the player list
-      if (data.players.some(p => p.id === socket.id)) {
-        setInRoom(true);
-      }
+        setDiceRoll(diceValue);
+        setRollingValue(diceValue);
+        setRollingPlayer(name);
+        setHasLanded(true);
 
-      // Initialize visual positions if not set
-      setVisualPositions(prev => {
-        const next = { ...prev };
-        data.players.forEach(p => {
-          if (next[p.id] === undefined) next[p.id] = p.position;
-        });
-        return next;
-      });
+        await new Promise(r => setTimeout(r, 1000));
 
-      if (data.players.length >= 2) {
-        addToast("Game is active! Good luck! ❤️");
-      }
-    });
+        setIsRolling(false);
+        setHasLanded(false);
 
-    socket.on('dice_rolling', ({ playerId, name, diceValue }) => {
-      const resolvedName = name || roomDataRef.current?.players.find(p => p.id === playerId)?.name || 'Someone';
-      setRollingPlayer(resolvedName);
-      setIsRolling(true);
-      setHasLanded(false);
+        let currentPos = visualPositionsRef.current[playerId] || 1;
+        const steps = diceValue;
 
-      // Animate the dice rolling
-      let startTime = Date.now();
-      const duration = 1500;
-      const interval = setInterval(() => {
-        const elapsed = Date.now() - startTime;
-        if (elapsed < duration - 200) {
-          setRollingValue(Math.floor(Math.random() * 6) + 1);
-        } else {
-          setRollingValue(diceValue);
-          clearInterval(interval);
+        for (let i = 1; i <= steps; i++) {
+          const nextStep = currentPos + i;
+          if (nextStep > 100) break;
+          setVisualPositions(prev => ({ ...prev, [playerId]: nextStep }));
+          await new Promise(r => setTimeout(r, 300));
         }
-      }, 80);
-    });
 
-    socket.on('dice_rolled', async ({ diceValue, playerId, name, newPosition, isSpecial, specialType, nextTurn, loveCard }) => {
-      setDiceRoll(diceValue);
-      setRollingValue(diceValue);
-      setRollingPlayer(name || roomDataRef.current?.players.find(p => p.id === playerId)?.name || 'Someone');
-      setHasLanded(true);
+        if (isSpecial) {
+          await new Promise(r => setTimeout(r, 500));
+          setVisualPositions(prev => ({ ...prev, [playerId]: newPosition }));
+        }
 
-      // Pause for exactly 1 second while showing the final number (stopped)
-      await new Promise(r => setTimeout(r, 1000));
-
-      setIsRolling(false);
-      setHasLanded(false);
-
-      const resolvedName = name || roomDataRef.current?.players.find(p => p.id === playerId)?.name || 'Someone';
-
-      // Step-by-step movement - Use Ref to avoid stale closure
-      let currentPos = visualPositionsRef.current[playerId] || 1;
-      const steps = diceValue;
-
-      for (let i = 1; i <= steps; i++) {
-        const nextStep = currentPos + i;
-        if (nextStep > 100) break;
-        setVisualPositions(prev => ({ ...prev, [playerId]: nextStep }));
-        await new Promise(r => setTimeout(r, 300));
-      }
-
-      // If special jump (snake/ladder)
-      if (isSpecial) {
-        await new Promise(r => setTimeout(r, 500));
-        setVisualPositions(prev => ({ ...prev, [playerId]: newPosition }));
-      }
-
-      let msg = `${resolvedName} rolled a ${diceValue}!`;
-      if (isSpecial) {
-        msg += ` Moving to ${newPosition} via ${specialType}!`;
+        let msg = `${name} rolled a ${diceValue}!`;
+        if (isSpecial) {
+          msg += ` Moving to ${newPosition} via ${specialType}!`;
+        }
         addToast(msg);
-      } else {
-        addToast(msg);
-      }
+        setMessage(msg);
 
-      setMessage(msg);
+        // Update local state (the DB update is handled by the roller)
+        setRoomData(prev => {
+          if (!prev) return prev;
+          const newPlayers = prev.players.map(p =>
+            p.id === playerId ? { ...p, position: newPosition } : p
+          );
+          return { ...prev, players: newPlayers, turn: nextTurn };
+        });
 
-      setRoomData(prev => {
-        const newPlayers = prev.players.map(p =>
-          p.id === playerId ? { ...p, position: newPosition } : p
-        );
-        return { ...prev, players: newPlayers, turn: nextTurn };
-      });
+        if (loveCard !== null && loveCard !== undefined) {
+          setTimeout(() => {
+            setCurrentCard(LDR_CARDS[loveCard]);
+          }, 1000);
+        }
+      })
+      .on('broadcast', { event: 'game_over' }, ({ payload }) => {
+        setWinner(payload.winner);
+        confetti({
+          particleCount: 150,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#ff4d6d', '#ffb3c1', '#ffffff']
+        });
+      })
+      .subscribe();
 
-      // Handle love card
-      if (loveCard !== null && loveCard !== undefined) {
-        setTimeout(() => {
-          setCurrentCard(LDR_CARDS[loveCard]);
-        }, 1000);
-      }
-    });
+    // Also listen to database changes for persistent state sync
+    const dbSubscription = supabase
+      .channel(`db-changes:${roomId}`)
+      .on('postgres_changes', {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'rooms',
+        filter: `id=eq.${roomId}`
+      }, (payload) => {
+        const newData = payload.new.data;
+        setRoomData(newData);
 
-    socket.on('game_over', ({ winner }) => {
-      setWinner(winner);
-      confetti({
-        particleCount: 150,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ['#ff4d6d', '#ffb3c1', '#ffffff']
-      });
-    });
+        // Sync visual positions if jumped
+        setVisualPositions(prev => {
+          const next = { ...prev };
+          newData.players.forEach(p => {
+            if (next[p.id] === undefined) next[p.id] = p.position;
+          });
+          return next;
+        });
+      })
+      .subscribe();
 
-    socket.on('error', (err) => addToast(`Error: ${err}`));
+    channelRef.current = channel;
 
     return () => {
-      socket.off('room_update');
-      socket.off('dice_rolled');
-      socket.off('dice_rolling');
-      socket.off('game_over');
-      socket.off('error');
+      supabase.removeChannel(channel);
+      supabase.removeChannel(dbSubscription);
     };
-  }, [roomId]); // Added roomId to deps to ensure status updates work
+  }, [roomId, inRoom, playerName]);
 
-  const joinRoom = () => {
+  const joinRoom = async () => {
     if (!playerName.trim()) return addToast("Please enter your name!");
 
     if (roomStatus.exists && roomStatus.hasPassword && !enteredPassword) {
       return addToast("This room is private. Please enter the password!");
     }
 
-    if (roomStatus.exists && roomStatus.hasPassword && enteredPassword != passwordInput) {
-      return addToast("Incorrect password!");
+    // Fetch latest room data to join
+    const { data: roomRow, error: fetchError } = await supabase
+      .from('rooms')
+      .select('*')
+      .eq('id', roomId)
+      .maybeSingle();
+
+    if (fetchError) {
+      console.error("Fetch Error:", fetchError);
+      return addToast("Connection error: " + fetchError.message);
     }
 
-    if (roomId) {
-      socket.emit('join_room', {
-        roomId,
-        name: playerName,
-        maxPlayers: maxPlayersInput,
-        password: passwordInput,
-        enteredPassword: enteredPassword
-      });
+    let room;
+    if (!roomRow) {
+      // Create new room
+      const colors = ['#ff4d6d', '#4d96ff', '#52b788', '#ffb703', '#9b5de5', '#f15bb5'];
+      room = {
+        players: [{
+          id: myPlayerId.current,
+          name: playerName,
+          position: 1,
+          color: colors[0]
+        }],
+        turn: 0,
+        gameStarted: false,
+        loveSquares: [],
+        cardIndex: 0,
+        maxPlayers: parseInt(maxPlayersInput) || 2,
+        password: passwordInput || null,
+        roomId
+      };
 
-      const url = new URL(window.location);
-      url.searchParams.set('room', roomId);
-      window.history.pushState({}, '', url);
+      // Generate love squares
+      const squares = new Set();
+      while (squares.size < 20) {
+        const r = Math.floor(Math.random() * 98) + 2;
+        if (!FULL_BOARD_EXTRAS[r]) squares.add(r);
+      }
+      room.loveSquares = Array.from(squares);
+
+      const { error: insertError } = await supabase.from('rooms').insert([{ id: roomId, data: room }]);
+      if (insertError) {
+        if (insertError.code === '23505') {
+          // Race condition: someone else created it in the last split second
+          return joinRoom();
+        }
+        console.error("Insert Error:", insertError);
+        return addToast("Failed to create room: " + insertError.message);
+      }
+    } else {
+      room = roomRow.data;
+      if (room.password && enteredPassword !== room.password) {
+        return addToast("Incorrect password!");
+      }
+
+      const isAlreadyIn = room.players.find(p => p.id === myPlayerId.current);
+      if (isAlreadyIn) {
+        // Player is returning - sync their name if it changed? No, keep existing.
+      } else if (room.players.length < room.maxPlayers) {
+        const colors = ['#ff4d6d', '#4d96ff', '#52b788', '#ffb703', '#9b5de5', '#f15bb5'];
+        room.players.push({
+          id: myPlayerId.current,
+          name: playerName,
+          position: 1,
+          color: colors[room.players.length % colors.length]
+        });
+
+        const { error: updateError } = await supabase.from('rooms').update({ data: room }).eq('id', roomId);
+        if (updateError) {
+          console.error("Update Error:", updateError);
+          return addToast("Failed to update room: " + updateError.message);
+        }
+      } else {
+        return addToast("Room is full!");
+      }
     }
+
+    setRoomData(room);
+    setInRoom(true);
+
+    const url = new URL(window.location);
+    url.searchParams.set('room', roomId);
+    window.history.pushState({}, '', url);
   };
 
-  const rollDice = () => {
-    if (roomData?.players[roomData.turn]?.id !== socket.id) return;
-    socket.emit('roll_dice', { roomId });
+  const rollDice = async () => {
+    const room = roomDataRef.current;
+    if (!room || room.players[room.turn]?.id !== myPlayerId.current) return;
+
+    const player = room.players[room.turn];
+    const diceValue = Math.floor(Math.random() * 6) + 1;
+
+    // Broadcast "rolling" animation
+    channelRef.current.send({
+      type: 'broadcast',
+      event: 'dice_rolling',
+      payload: { playerId: myPlayerId.current, name: player.name, diceValue }
+    });
+
+    // Wait for animation
+    setTimeout(async () => {
+      let newPosition = player.position + diceValue;
+      if (newPosition > 100) newPosition = player.position;
+
+      const finalPosition = FULL_BOARD_EXTRAS[newPosition] || newPosition;
+      const isSpecial = !!FULL_BOARD_EXTRAS[newPosition];
+      const specialType = isSpecial ? (FULL_BOARD_EXTRAS[newPosition] > newPosition ? 'ladder' : 'snake') : null;
+
+      const landedOnLove = room.loveSquares.includes(finalPosition);
+      let loveCard = null;
+      if (landedOnLove) {
+        loveCard = room.cardIndex;
+        room.cardIndex = (room.cardIndex + 1) % 22; // TOTAL_LOVE_CARDS
+      }
+
+      const nextTurn = (room.turn + 1) % room.players.length;
+
+      // Update local state for immediate feedback
+      player.position = finalPosition;
+      room.turn = nextTurn;
+
+      // Update Database
+      await supabase.from('rooms').update({ data: room }).eq('id', roomId);
+
+      // Broadcast "rolled" event for animation
+      channelRef.current.send({
+        type: 'broadcast',
+        event: 'dice_rolled',
+        payload: {
+          diceValue,
+          playerId: myPlayerId.current,
+          name: player.name,
+          newPosition: finalPosition,
+          isSpecial,
+          specialType,
+          nextTurn,
+          loveCard
+        }
+      });
+
+      if (finalPosition === 100) {
+        channelRef.current.send({
+          type: 'broadcast',
+          event: 'game_over',
+          payload: { winner: player.name }
+        });
+      }
+    }, 1500);
   };
 
   const copyRoomLink = () => {
@@ -281,7 +437,7 @@ function App() {
           <GamePanel
             roomData={roomData}
             roomId={roomId}
-            socket={socket}
+            myPlayerId={myPlayerId.current}
             rollDice={rollDice}
             isRolling={isRolling}
             copyRoomLink={copyRoomLink}
