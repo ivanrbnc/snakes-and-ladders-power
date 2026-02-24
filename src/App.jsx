@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { User } from 'lucide-react';
-import { supabase } from './lib/supabase';
+import { supabase, supabaseUrl, supabaseAnonKey } from './lib/supabase';
 
 // Sub-components
 import Lobby from './components/lobby/Lobby';
@@ -116,7 +116,7 @@ function App() {
     const channel = supabase.channel(`room:${roomId}`, {
       config: {
         presence: {
-          key: playerName,
+          key: myPlayerId.current,
         },
         broadcast: {
           self: true,
@@ -126,8 +126,9 @@ function App() {
 
     channel
       .on('presence', { event: 'sync' }, () => {
+        // Presence is purely for UI/Status now, not for DB cleanup
         const state = channel.presenceState();
-        // Handle presence if needed
+        // console.log("Presence sync:", state);
       })
       .on('broadcast', { event: 'dice_rolling' }, ({ payload }) => {
         const { playerId, name, diceValue } = payload;
@@ -239,6 +240,38 @@ function App() {
     };
   }, [roomId, inRoom, playerName]);
 
+  const leaveRoom = useCallback(() => {
+    if (!roomId || !inRoom) return;
+
+    // Use raw fetch with keepalive to ensure the request finishes even if the tab closes
+    const url = `${supabaseUrl}/rest/v1/rpc/leave_room`;
+    const body = JSON.stringify({ p_room_id: roomId, p_player_id: myPlayerId.current });
+
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': supabaseAnonKey,
+        'Authorization': `Bearer ${supabaseAnonKey}`
+      },
+      body,
+      keepalive: true
+    }).catch(err => console.error("Error leaving room:", err));
+  }, [roomId, inRoom]);
+
+  // Clean up on unmount or tab close
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      leaveRoom();
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      if (inRoom) leaveRoom();
+    };
+  }, [leaveRoom, inRoom]);
+
   const joinRoom = async () => {
     if (!playerName.trim()) return addToast("Please enter your name!");
 
@@ -246,7 +279,7 @@ function App() {
       return addToast("This room is private. Please enter the password!");
     }
 
-    // Fetch latest room data to join
+    // Fetch latest room data
     const { data: roomRow, error: fetchError } = await supabase
       .from('rooms')
       .select('*')
@@ -259,8 +292,8 @@ function App() {
     }
 
     let room;
-    if (!roomRow) {
-      // Create new room
+    // If room doesn't exist OR it exists but has 0 players (abandoned)
+    if (!roomRow || !roomRow.data || !roomRow.data.players || roomRow.data.players.length === 0) {
       const colors = ['#ff4d6d', '#4d96ff', '#52b788', '#ffb703', '#9b5de5', '#f15bb5'];
       room = {
         players: [{
@@ -278,7 +311,6 @@ function App() {
         roomId
       };
 
-      // Generate love squares
       const squares = new Set();
       while (squares.size < 20) {
         const r = Math.floor(Math.random() * 98) + 2;
@@ -286,14 +318,11 @@ function App() {
       }
       room.loveSquares = Array.from(squares);
 
-      const { error: insertError } = await supabase.from('rooms').insert([{ id: roomId, data: room }]);
-      if (insertError) {
-        if (insertError.code === '23505') {
-          // Race condition: someone else created it in the last split second
-          return joinRoom();
-        }
-        console.error("Insert Error:", insertError);
-        return addToast("Failed to create room: " + insertError.message);
+      // UPSERT handles both new rooms and resetting empty ones
+      const { error: upsertError } = await supabase.from('rooms').upsert([{ id: roomId, data: room }]);
+      if (upsertError) {
+        console.error("Upsert Error:", upsertError);
+        return addToast("Failed to join room: " + upsertError.message);
       }
     } else {
       room = roomRow.data;
@@ -302,24 +331,20 @@ function App() {
       }
 
       const isAlreadyIn = room.players.find(p => p.id === myPlayerId.current);
-      if (isAlreadyIn) {
-        // Player is returning - sync their name if it changed? No, keep existing.
-      } else if (room.players.length < room.maxPlayers) {
-        const colors = ['#ff4d6d', '#4d96ff', '#52b788', '#ffb703', '#9b5de5', '#f15bb5'];
-        room.players.push({
-          id: myPlayerId.current,
-          name: playerName,
-          position: 1,
-          color: colors[room.players.length % colors.length]
-        });
-
-        const { error: updateError } = await supabase.from('rooms').update({ data: room }).eq('id', roomId);
-        if (updateError) {
-          console.error("Update Error:", updateError);
-          return addToast("Failed to update room: " + updateError.message);
+      if (!isAlreadyIn) {
+        if (room.players.length < room.maxPlayers) {
+          const colors = ['#ff4d6d', '#4d96ff', '#52b788', '#ffb703', '#9b5de5', '#f15bb5'];
+          room.players.push({
+            id: myPlayerId.current,
+            name: playerName,
+            position: 1,
+            color: colors[room.players.length % colors.length]
+          });
+          const { error: updateError } = await supabase.from('rooms').update({ data: room }).eq('id', roomId);
+          if (updateError) return addToast("Failed to join: " + updateError.message);
+        } else {
+          return addToast("Room is full!");
         }
-      } else {
-        return addToast("Room is full!");
       }
     }
 
