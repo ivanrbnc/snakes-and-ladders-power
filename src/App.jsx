@@ -16,6 +16,7 @@ import PowerInventory from './components/game/PowerInventory';
 import PowerFoundModal from './components/game/modals/PowerFoundModal';
 import TargetSelectionModal from './components/game/modals/TargetSelectionModal';
 import PlayerToken from './components/game/PlayerToken';
+import DevTools from './components/game/DevTools';
 
 // Constants
 import { MAX_POWER_CARDS } from './configuration/gameConstants';
@@ -23,13 +24,13 @@ import { getPositionCoords } from './utils/gameUtils';
 
 function App() {
   const {
-    roomId, setRoomId, playerName, setPlayerName, inRoom, roomData, isRolling, rollingPlayer, 
-    currentCard, setCurrentCard, winner, roomStatus, setRoomStatus, visualPositions, toasts, 
-    maxPlayersInput, setMaxPlayersInput, passwordInput, setPasswordInput, 
-    enteredPassword, setEnteredPassword, showPasswordPrompt, setShowPasswordPrompt, 
-    rollingValue, hasLanded, pendingPowerCard, setPendingPowerCard, 
-    targetSelection, setTargetSelection, hasRolledThisTurn, myPlayerId, 
-    joinRoom, rollDice, handlePowerCardChoice, onUseCardFromInventory, 
+    roomId, setRoomId, playerName, setPlayerName, inRoom, roomData, isRolling, rollingPlayer,
+    currentCard, setCurrentCard, winner, roomStatus, setRoomStatus, visualPositions, toasts,
+    maxPlayersInput, setMaxPlayersInput, passwordInput, setPasswordInput,
+    enteredPassword, setEnteredPassword, showPasswordPrompt, setShowPasswordPrompt,
+    rollingValue, hasLanded, pendingPowerCard, setPendingPowerCard,
+    targetSelection, setTargetSelection, hasRolledThisTurn, myPlayerId,
+    joinRoom, rollDice, handlePowerCardChoice, onUseCardFromInventory,
     executePowerCard, copyRoomLink, setDebugRoll
   } = useGameLogic();
 
@@ -73,11 +74,11 @@ function App() {
             renderVisuals={() => (
               <AnimatePresence>
                 {roomData?.players.map((p) => (
-                  <PlayerToken 
-                    key={p.id} 
-                    player={p} 
-                    pos={visualPositions[p.id] || p.position} 
-                    getPositionCoords={getPositionCoords} 
+                  <PlayerToken
+                    key={p.id}
+                    player={p}
+                    pos={visualPositions[p.id] || p.position}
+                    getPositionCoords={getPositionCoords}
                   />
                 ))}
               </AnimatePresence>
@@ -121,6 +122,8 @@ function App() {
           </AnimatePresence>
 
           <WinnerOverlay winner={winner} />
+
+          <DevTools setDebugRoll={setDebugRoll} />
         </div>
       )}
     </>

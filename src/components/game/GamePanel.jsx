@@ -2,7 +2,7 @@ import React from 'react';
 import { User, Dice5 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const GamePanel = ({ roomData, roomId, myPlayerId, rollDice, isRolling, copyRoomLink, setDebugRoll }) => {
+const GamePanel = ({ roomData, roomId, myPlayerId, rollDice, isRolling, copyRoomLink }) => {
     return (
         <>
             <div className="info-panel glass-panel">
@@ -15,8 +15,13 @@ const GamePanel = ({ roomData, roomId, myPlayerId, rollDice, isRolling, copyRoom
                         </span>
                     </div>
                 ))}
-                <div className="turn-indicator">
-                    {roomData?.players && roomData.players[roomData.turn]?.id === myPlayerId ? "It's Your Turn! 🎲" : `Waiting for ${roomData?.players && (roomData.players[roomData.turn]?.name || '...')}`}
+
+                <div className="turn-indicator" style={{ marginTop: '15px' }}>
+                    {roomData?.players.length < (roomData?.maxPlayers || 2)
+                        ? <span style={{ fontSize: '0.94rem', opacity: 0.8, fontWeight: 'normal' }}>Waiting for players... ⏳</span>
+                        : roomData.players[roomData.turn]?.id === myPlayerId
+                            ? "It's Your Turn! 🎲"
+                            : `Waiting for ${roomData.players[roomData.turn]?.name || "..."}`}
                 </div>
 
                 <button
@@ -32,31 +37,6 @@ const GamePanel = ({ roomData, roomId, myPlayerId, rollDice, isRolling, copyRoom
                 >
                     Copy Invitation Link
                 </button>
-
-                {/* Debug Tools */}
-                <div style={{ marginTop: '20px', paddingTop: '15px', borderTop: '1px solid rgba(0,0,0,0.05)' }}>
-                    <p style={{ fontSize: '0.8rem', opacity: 0.5, marginBottom: '8px' }}>Dev: Force Next Roll</p>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '5px' }}>
-                        {[1, 2, 3, 4, 5, 6].map(num => (
-                            <button
-                                key={num}
-                                onClick={() => setDebugRoll(num)}
-                                style={{
-                                    padding: '5px',
-                                    borderRadius: '8px',
-                                    border: '1px solid #ddd',
-                                    background: 'white',
-                                    fontSize: '0.8rem',
-                                    cursor: 'pointer'
-                                }}
-                            >
-                                Roll {num}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-
-
             </div>
 
             <div className="controls">

@@ -167,7 +167,16 @@ export const useGameLogic = () => {
                     setVisualPositions(prev => ({ ...prev, [playerId]: newPosition }));
                 }
                 animatingPlayerRef.current = null;
-                addToast(isSpecial ? `${name} rolled ${diceValue}! via ${specialType} to ${newPosition}` : `${name} rolled ${diceValue}!`);
+
+                let rollMsg = `${name} rolled ${diceValue}!`;
+                if (isSpecial) {
+                    if (specialType === 'ladder') {
+                        rollMsg += ` Climbed to ${newPosition} via ladder!`;
+                    } else if (specialType === 'snake') {
+                        rollMsg += ` Slided to ${newPosition} via snake!`;
+                    }
+                }
+                addToast(rollMsg);
                 setRoomData(prev => {
                     if (!prev) return prev;
                     const newPlayers = prev.players.map(p => p.id === playerId ? { ...p, position: newPosition } : p);
