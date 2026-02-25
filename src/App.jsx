@@ -17,6 +17,7 @@ import PowerFoundModal from './components/game/modals/PowerFoundModal';
 import TargetSelectionModal from './components/game/modals/TargetSelectionModal';
 import PlayerToken from './components/game/PlayerToken';
 import DevTools from './components/game/DevTools';
+import ResponsiveBlocker from './components/common/ResponsiveBlocker';
 
 // Constants
 import { MAX_POWER_CARDS } from './configuration/gameConstants';
@@ -35,7 +36,7 @@ function App() {
   } = useGameLogic();
 
   return (
-    <>
+    <ResponsiveBlocker>
       <ToastContainer toasts={toasts} />
 
       {!inRoom ? (
@@ -126,7 +127,7 @@ function App() {
           {import.meta.env.VITE_ENVIRONMENT === 'DEV' && <DevTools setDebugRoll={setDebugRoll} />}
         </div>
       )}
-    </>
+    </ResponsiveBlocker>
   );
 }
 
