@@ -98,6 +98,26 @@ $$ language plpgsql security definer;
 4.  Ensure the **Enable Realtime** checkbox is **checked**.
 5.  Click **Save**.
 
+### 3. Auto-Cleanup Inactive Rooms (Optional)
+To prevent your database from being cluttered with old rooms, you can schedule an automatic cleanup:
+
+1.  Go to **Database** -> **Extensions** in your Supabase Dashboard.
+2.  Search for **`pg_cron`** and enable it.
+3.  Run the following script in the **SQL Editor**:
+
+```sql
+-- 1. Enable the cron extension
+create extension if not exists pg_cron;
+
+-- 2. Schedule the deletion job
+-- This will run every hour and delete rooms created more than 1 day ago
+select cron.schedule(
+  'delete-old-rooms', -- Job name
+  '0 * * * *',         -- Cron schedule (every hour at minute 0)
+  'delete from public.rooms where created_at < now() - interval ''1 day'''
+);
+```
+
 ---
 
 ## 🎮 Features
