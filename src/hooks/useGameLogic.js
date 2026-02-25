@@ -285,7 +285,7 @@ export const useGameLogic = () => {
                 loveCard = currentRoomForRoll.cardIndex;
                 currentRoomForRoll.cardIndex = (currentRoomForRoll.cardIndex + 1) % LDR_CARDS.length;
             }
-            const foundPower = (currentRoomForRoll.powerSquares || []).includes(finalPosition) && !isSpecial ? POWER_CARDS[Math.floor(Math.random() * POWER_CARDS.length)] : null;
+            const foundPower = (currentRoomForRoll.powerSquares || []).includes(finalPosition) ? POWER_CARDS[Math.floor(Math.random() * POWER_CARDS.length)] : null;
             const nextTurn = (currentRoomForRoll.turn + 1) % currentRoomForRoll.players.length;
             const updatedPlayers = currentRoomForRoll.players.map(p => p.id === myPlayerId.current ? { ...p, position: finalPosition, nextRollGuaranteed: null } : p);
             const updatedRoom = { ...currentRoomForRoll, players: updatedPlayers, turn: nextTurn };
