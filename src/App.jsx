@@ -123,7 +123,7 @@ function App() {
 
           <WinnerOverlay winner={winner} />
 
-          <DevTools setDebugRoll={setDebugRoll} />
+          {import.meta.env.VITE_ENVIRONMENT === 'DEV' && <DevTools setDebugRoll={setDebugRoll} />}
         </div>
       )}
     </>

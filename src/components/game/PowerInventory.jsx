@@ -73,7 +73,7 @@ const PowerInventory = ({ players, myPlayerId, onUseCard, isMyTurn, disabled }) 
                 .power-inventory {
                     position: fixed;
                     left: 20px;
-                    top: 280px; /* Below the 250px-ish game panel */
+                    top: 250px; /* Closer to the game panel */
                     width: 250px;
                     padding: 20px;
                     z-index: 100;
