@@ -51,7 +51,7 @@ const DiceOverlay = ({ isRolling, hasLanded, rollingValue, rollingPlayer }) => {
                     textShadow: '0 2px 4px rgba(0,0,0,0.1)'
                 }}
             >
-                {hasLanded ? `${rollingPlayer} gets ${rollingValue}! ✨` : `${rollingPlayer} is rolling...`}
+                {hasLanded ? `${rollingPlayer} gets ${rollingValue} ✨` : `${rollingPlayer} is rolling..`}
             </motion.p>
         </div>
     );

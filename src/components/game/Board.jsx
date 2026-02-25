@@ -1,6 +1,6 @@
 import React from 'react';
-import { Heart } from 'lucide-react';
-import { FULL_BOARD_EXTRAS } from '../../constants/gameConstants';
+import { Heart, Zap } from 'lucide-react';
+import { FULL_BOARD_EXTRAS } from '../../configuration/gameConstants';
 
 const Board = ({ roomData, renderVisuals }) => {
     const getSquareCoords = (pos, isJump = false, seed = 0) => {
@@ -42,9 +42,13 @@ const Board = ({ roomData, renderVisuals }) => {
                 }
 
                 const isLoveSquare = loveSquares.includes(num);
+                const isPowerSquare = (roomData?.powerSquares || []).includes(num);
 
                 cells.push(
-                    <div key={num} className="cell" style={{ position: 'relative', background: isLoveSquare ? 'rgba(255, 117, 143, 0.1)' : 'transparent' }}>
+                    <div key={num} className="cell" style={{
+                        position: 'relative',
+                        background: isLoveSquare ? 'rgba(255, 117, 143, 0.1)' : (isPowerSquare ? 'rgba(255, 183, 3, 0.1)' : 'transparent')
+                    }}>
                         <span style={{ position: 'relative', zIndex: 2 }}>{num}</span>
                         {isLoveSquare && (
                             <div style={{
@@ -57,6 +61,19 @@ const Board = ({ roomData, renderVisuals }) => {
                                 zIndex: 1
                             }}>
                                 <Heart fill="#ff4d6d" size={40} />
+                            </div>
+                        )}
+                        {isPowerSquare && (
+                            <div style={{
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%, -50%)',
+                                opacity: 0.8,
+                                color: '#ffb703',
+                                zIndex: 1
+                            }}>
+                                <Zap fill="#ffb703" size={40} />
                             </div>
                         )}
                     </div>

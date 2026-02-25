@@ -300,3 +300,119 @@ body {
   color: white !important;
   transform: scale(1.05);
 }
+
+/* Power Card Modals */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3000;
+}
+
+.power-found-modal,
+.target-modal {
+  background: white;
+  padding: 30px;
+  border-radius: 24px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  border: 2px solid #ffb703;
+}
+
+.zap-icon {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.zap-icon svg {
+  animation: pulse 2s infinite;
+}
+
+.found-card-preview {
+  background: #fff9db;
+  padding: 20px;
+  border-radius: 16px;
+  margin: 20px 0;
+  border: 1px dashed #ffb703;
+}
+
+.found-card-preview h3 {
+  color: #d4a017;
+  margin-bottom: 5px;
+}
+
+.found-card-preview p {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.modal-actions button {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.btn-use {
+  background: #ffb703;
+  color: white;
+}
+
+.btn-save {
+  background: #52b788;
+  color: white;
+}
+
+.modal-actions button:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+.target-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.target-list button {
+  padding: 15px;
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-weight: 800;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.target-list button:hover {
+  transform: scale(1.02);
+  filter: brightness(1.1);
+}
+
+.btn-cancel {
+  margin-top: 20px;
+  background: none;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: underline;
+}
