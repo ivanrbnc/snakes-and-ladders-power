@@ -26,7 +26,8 @@ const TargetSelectionModal = ({ targetSelection, players, myPlayerId, onSelect, 
                                 onClick={() => onSelect(targetSelection.card, targetSelection.loveCardIndex, p.id)}
                                 style={{ backgroundColor: p.color }}
                             >
-                                {p.name} {p.protected ? '🛡️' : ''}
+                                {p.name}
+                                {/* {p.protected ? '🛡️' : ''} */}
                             </button>
                         ))
                     }

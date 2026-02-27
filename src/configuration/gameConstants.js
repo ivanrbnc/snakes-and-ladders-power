@@ -117,8 +117,8 @@ export const POWER_CARDS = [
         rarity: 'common'
     },
     {
-        id: 'lucky-dice',
-        name: '🎲 Lucky Dice',
+        id: 'lucky',
+        name: '🎲 Lucky',
         description: 'Your next roll will be a guaranteed 6.',
         type: 'support',
         rarity: 'uncommon'

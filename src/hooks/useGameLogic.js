@@ -343,7 +343,7 @@ export const useGameLogic = () => {
                     movement = { playerId: player.id, start, end: player.position };
                     actorMsg = `${player.name} used Turbo! ⚡`;
                 }
-                else if (card.id === 'lucky-dice') {
+                else if (card.id === 'lucky') {
                     player.nextRollGuaranteed = 6;
                     actorMsg = `${player.name} used Lucky Dice! 🎲`;
                 }
