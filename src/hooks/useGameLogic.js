@@ -128,16 +128,14 @@ export const useGameLogic = () => {
                 hasLandedRef.current = false;
                 setIsRolling(true);
                 isRollingRef.current = true;
-                let startTime = Date.now();
-                const duration = 1000;
+                let prevVal = 1;
                 window.diceInterval = setInterval(() => {
-                    const elapsed = Date.now() - startTime;
-                    if (elapsed < duration - 100) {
-                        setRollingValue(Math.floor(Math.random() * 6) + 1);
-                    } else {
-                        setRollingValue(diceValue);
-                        clearInterval(window.diceInterval);
-                    }
+                    let nextVal;
+                    do {
+                        nextVal = Math.floor(Math.random() * 6) + 1;
+                    } while (nextVal === prevVal); // Make sure it always changes frame to frame
+                    prevVal = nextVal;
+                    setRollingValue(nextVal);
                 }, 80);
             })
             .on('broadcast', { event: 'dice_rolled' }, async ({ payload }) => {
@@ -149,7 +147,7 @@ export const useGameLogic = () => {
                 hasLandedRef.current = true;
                 setIsRolling(true);
                 isRollingRef.current = true;
-                await new Promise(r => setTimeout(r, 500));
+                await new Promise(r => setTimeout(r, 1000));
                 setIsRolling(false);
                 isRollingRef.current = false;
                 setHasLanded(false);
