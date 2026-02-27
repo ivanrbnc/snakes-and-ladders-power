@@ -81,7 +81,7 @@ const Lobby = ({
                                         value={playerName}
                                         onChange={(e) => setPlayerName(e.target.value)}
                                         autoFocus
-                                        style={{ border: 'none', padding: '6px', width: '100%', outline: 'none', fontSize: '0.9rem', color: '#590d22', opacity: 0.8 }}
+                                        style={{ border: 'none', padding: '4px', width: '100%', outline: 'none', fontSize: '0.85rem', color: '#590d22', opacity: 0.8 }}
                                     />
                                 </div>
                             </motion.div>
@@ -210,14 +210,14 @@ const Lobby = ({
                                     style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}
                                 >
                                     <label style={{ fontSize: '0.75rem', fontWeight: 'bold', opacity: 0.7, marginLeft: '5px' }}>Password</label>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#fff', padding: '4px 12px', borderRadius: '10px', border: '1px solid #eee' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#fff', padding: '4px 10px', borderRadius: '10px', border: '1px solid #eee' }}>
                                         <Lock color="#ff4d6d" size={16} />
                                         <input
                                             type="password"
                                             placeholder="Enter room password..."
                                             value={enteredPassword}
                                             onChange={(e) => setEnteredPassword(e.target.value)}
-                                            style={{ border: 'none', padding: '6px', width: '100%', outline: 'none', fontSize: '0.9rem' }}
+                                            style={{ border: 'none', padding: '4px', width: '100%', outline: 'none', fontSize: '0.85rem' }}
                                         />
                                     </div>
                                 </motion.div>
@@ -230,7 +230,7 @@ const Lobby = ({
                                 style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}
                             >
                                 <label style={{ fontSize: '0.75rem', fontWeight: 'bold', opacity: 0.7, marginLeft: '5px' }}>Room Code</label>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#fff0f3', padding: '4px 12px', borderRadius: '10px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#fff0f3', padding: '4px 10px', borderRadius: '10px' }}>
                                     <Heart color="#ff4d6d" fill="#ff4d6d" size={16} />
                                     <input
                                         type="text"
@@ -240,7 +240,7 @@ const Lobby = ({
                                             setRoomStatus({ exists: false, count: 0 });
                                         }}
                                         placeholder="Room Code"
-                                        style={{ border: 'none', padding: '6px', width: '100%', outline: 'none', background: 'transparent', color: '#ff4d6d', fontWeight: 'bold', fontSize: '0.9rem' }}
+                                        style={{ border: 'none', padding: '4px', width: '100%', outline: 'none', background: 'transparent', color: '#ff4d6d', fontWeight: 'bold', fontSize: '0.85rem' }}
                                     />
                                 </div>
                             </motion.div>
