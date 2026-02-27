@@ -235,7 +235,7 @@ export const useGameLogic = () => {
             const colors = ['#ff4d6d', '#4d96ff', '#52b788', '#ffb703', '#9b5de5', '#f15bb5'];
             room = {
                 players: [{ id: myPlayerId.current, name: playerName, avatar: playerAvatar, position: 1, color: colors[0], powerCards: [], protected: false, skippingTurn: false, nextRollGuaranteed: null }],
-                turn: 0, gameStarted: false, cardIndex: 0, maxPlayers: parseInt(maxPlayersInput) || 2, password: passwordInput || null, roomId,
+                turn: 0, gameStarted: false, loveCardIndex: 0, maxPlayers: parseInt(maxPlayersInput) || 2, password: passwordInput || null, roomId,
                 loveSquares: generateLoveSquares(), powerSquares: []
             };
             room.powerSquares = generatePowerSquares(room.loveSquares);
@@ -281,8 +281,8 @@ export const useGameLogic = () => {
             const currentRoomForRoll = roomDataRef.current;
             let loveCard = null;
             if ((currentRoomForRoll.loveSquares || []).includes(finalPosition)) {
-                loveCard = currentRoomForRoll.cardIndex;
-                currentRoomForRoll.cardIndex = (currentRoomForRoll.cardIndex + 1) % LDR_CARDS.length;
+                loveCard = currentRoomForRoll.loveCardIndex;
+                currentRoomForRoll.loveCardIndex = (currentRoomForRoll.loveCardIndex + 1) % LDR_CARDS.length;
             }
             const foundPower = (currentRoomForRoll.powerSquares || []).includes(finalPosition) ? POWER_CARDS[Math.floor(Math.random() * POWER_CARDS.length)] : null;
             const nextTurn = (currentRoomForRoll.turn + 1) % currentRoomForRoll.players.length;
@@ -313,13 +313,13 @@ export const useGameLogic = () => {
     const onUseCardFromInventory = (card, index) => {
         // If the card constant has requiresTarget, we MUST trigger selection
         if (card.requiresTarget) {
-            setTargetSelection({ card, cardIndex: index });
+            setTargetSelection({ card, loveCardIndex: index });
         } else {
             executePowerCard(card, index);
         }
     };
 
-    const executePowerCard = async (card, cardIndex, targetId = null) => {
+    const executePowerCard = async (card, loveCardIndex, targetId = null) => {
         const currentRoom = roomDataRef.current;
         if (!currentRoom) return;
 
@@ -331,7 +331,7 @@ export const useGameLogic = () => {
             let player = { ...p };
             if (player.id === myPlayerId.current) {
                 player.powerCards = [...(p.powerCards || [])];
-                if (cardIndex !== -1) player.powerCards.splice(cardIndex, 1);
+                if (loveCardIndex !== -1) player.powerCards.splice(loveCardIndex, 1);
 
                 if (card.id === 'shield') {
                     player.protected = true;

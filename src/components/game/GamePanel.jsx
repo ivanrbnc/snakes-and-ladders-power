@@ -6,12 +6,18 @@ const GamePanel = ({ roomData, roomId, myPlayerId, rollDice, isRolling, copyRoom
     return (
         <>
             <div className="info-panel glass-panel">
-                <h3 style={{ marginBottom: '15px' }}>Players Online</h3>
+                <h3 style={{ marginBottom: '15px' }}>Players in the room</h3>
                 {roomData?.players.map(p => (
                     <div key={p.id} className="player-info" style={{ opacity: roomData.players[roomData.turn]?.id === p.id ? 1 : 0.6 }}>
                         <div className="color-dot" style={{ backgroundColor: p.color }} />
                         <span style={{ fontWeight: roomData.players[roomData.turn]?.id === p.id ? 'bold' : 'normal', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            {p.avatar ? <span>{p.avatar}</span> : null}
+                            {p.avatar ? (
+                                p.avatar.startsWith('data:image') ? (
+                                    <img src={p.avatar} alt="avatar" style={{ width: '24px', height: '24px', borderRadius: '50%', objectFit: 'cover' }} />
+                                ) : (
+                                    <span>{p.avatar}</span>
+                                )
+                            ) : null}
                             <span>{p.name} {p.id === myPlayerId ? "(You)" : ""}</span>
                         </span>
                     </div>
@@ -38,7 +44,7 @@ const GamePanel = ({ roomData, roomId, myPlayerId, rollDice, isRolling, copyRoom
                 >
                     Copy Invitation Link
                 </button>
-            </div>
+            </div >
 
             <div className="controls">
                 <div className="dice-container">

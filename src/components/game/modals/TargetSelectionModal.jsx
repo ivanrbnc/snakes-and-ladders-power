@@ -23,7 +23,7 @@ const TargetSelectionModal = ({ targetSelection, players, myPlayerId, onSelect, 
                         .map(p => (
                             <button
                                 key={p.id}
-                                onClick={() => onSelect(targetSelection.card, targetSelection.cardIndex, p.id)}
+                                onClick={() => onSelect(targetSelection.card, targetSelection.loveCardIndex, p.id)}
                                 style={{ backgroundColor: p.color }}
                             >
                                 {p.name} {p.protected ? '🛡️' : ''}

@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { User, Heart, Lock } from 'lucide-react';
+import { User, Heart, Lock, Camera } from 'lucide-react';
+import CameraCapture from './CameraCapture';
 
 const Lobby = ({
     roomStatus,
@@ -20,6 +21,8 @@ const Lobby = ({
     joinRoom,
     showPasswordPrompt
 }) => {
+    const [showCamera, setShowCamera] = useState(false);
+
     return (
         <div className="setup-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', gap: '20px' }}>
             <h1 className="title" style={{ fontSize: '3.5rem' }}>Snakes & Ladders</h1>
@@ -80,30 +83,64 @@ const Lobby = ({
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                 <label style={{ fontSize: '0.8rem', fontWeight: 'bold', opacity: 0.7, marginLeft: '5px' }}>Select Avatar</label>
                                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center' }}>
-                                    {['🐻', '🐶', '🐱', '🦊', '🐰', '🐼', '🐸', '🐷', '🐨', '🐯', '🐧', '🐢'].map(emoji => (
-                                        <button
-                                            key={emoji}
-                                            type="button"
-                                            onClick={() => setPlayerAvatar(emoji)}
-                                            style={{
-                                                fontSize: '1.5rem',
-                                                padding: '5px',
-                                                borderRadius: '50%',
-                                                border: '2px solid',
-                                                borderColor: playerAvatar === emoji ? '#ff4d6d' : 'transparent',
-                                                background: playerAvatar === emoji ? '#fff0f3' : 'transparent',
-                                                cursor: 'pointer',
-                                                transition: 'all 0.2s',
-                                                width: '40px',
-                                                height: '40px',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                            }}
-                                        >
-                                            {emoji}
-                                        </button>
-                                    ))}
+                                    {['🐻', '🐶', '🐱', '🦊', '🐰', '🐼', '🐸', '🐷', '🐨', '🐯', '🐧', '📷'].map((emoji, index) => {
+                                        if (index === 11) {
+                                            const isImage = playerAvatar && playerAvatar.startsWith('data:image');
+                                            return (
+                                                <button
+                                                    key="camera"
+                                                    type="button"
+                                                    onClick={() => setShowCamera(true)}
+                                                    style={{
+                                                        fontSize: '1.2rem',
+                                                        padding: '0',
+                                                        borderRadius: '50%',
+                                                        border: '2px solid',
+                                                        borderColor: isImage ? '#ff4d6d' : 'transparent',
+                                                        background: isImage ? '#fff0f3' : 'transparent',
+                                                        cursor: 'pointer',
+                                                        transition: 'all 0.2s',
+                                                        width: '40px',
+                                                        height: '40px',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        overflow: 'hidden'
+                                                    }}
+                                                >
+                                                    {isImage ? (
+                                                        <img src={playerAvatar} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                    ) : (
+                                                        <Camera size={20} color={playerAvatar === emoji ? '#ff4d6d' : '#666'} />
+                                                    )}
+                                                </button>
+                                            );
+                                        }
+                                        return (
+                                            <button
+                                                key={emoji}
+                                                type="button"
+                                                onClick={() => setPlayerAvatar(emoji)}
+                                                style={{
+                                                    fontSize: '1.5rem',
+                                                    padding: '5px',
+                                                    borderRadius: '50%',
+                                                    border: '2px solid',
+                                                    borderColor: playerAvatar === emoji ? '#ff4d6d' : 'transparent',
+                                                    background: playerAvatar === emoji ? '#fff0f3' : 'transparent',
+                                                    cursor: 'pointer',
+                                                    transition: 'all 0.2s',
+                                                    width: '40px',
+                                                    height: '40px',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                }}
+                                            >
+                                                {emoji}
+                                            </button>
+                                        );
+                                    })}
                                 </div>
                             </div>
 
@@ -136,7 +173,7 @@ const Lobby = ({
                                         </div>
                                     </div>
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                                        <label style={{ fontSize: '0.8rem', fontWeight: 'bold', opacity: 0.7, marginLeft: '5px' }}>Optional Password</label>
+                                        <label style={{ fontSize: '0.8rem', fontWeight: 'bold', opacity: 0.7, marginLeft: '5px' }}>Password (optional)</label>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#fff', padding: '5px 12px', borderRadius: '10px', border: '1px solid #eee' }}>
                                             <Lock color="#ff4d6d" size={18} />
                                             <input
@@ -189,6 +226,16 @@ const Lobby = ({
                     </>
                 )}
             </form>
+
+            {showCamera && (
+                <CameraCapture
+                    onCapture={(dataUrl) => {
+                        setPlayerAvatar(dataUrl);
+                        setShowCamera(false);
+                    }}
+                    onCancel={() => setShowCamera(false)}
+                />
+            )}
         </div>
     );
 };
