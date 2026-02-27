@@ -24,8 +24,8 @@ const Lobby = ({
     const [showCamera, setShowCamera] = useState(false);
 
     return (
-        <div className="setup-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', gap: '20px' }}>
-            <h1 className="title" style={{ fontSize: '3.5rem' }}>Snakes & Ladders</h1>
+        <div className="setup-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', gap: '10px', padding: '20px', overflow: 'hidden' }}>
+            <h1 className="title" style={{ fontSize: 'clamp(2.5rem, 8vh, 3.8rem)', margin: 0 }}>Snakes & Ladders</h1>
 
             <form
                 onSubmit={(e) => {
@@ -33,7 +33,7 @@ const Lobby = ({
                     joinRoom();
                 }}
                 className="glass-panel"
-                style={{ padding: '40px', display: 'flex', flexDirection: 'column', gap: '25px', width: '400px', position: 'relative' }}
+                style={{ padding: '20px 25px', display: 'flex', flexDirection: 'column', gap: '12px', width: '90%', maxWidth: '340px', position: 'relative' }}
             >
                 {roomStatus.exists && roomStatus.count >= roomStatus.maxPlayers ? (
                     <div style={{ textAlign: 'center' }}>
@@ -65,26 +65,36 @@ const Lobby = ({
                             </div>
                         )}
 
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                                <label style={{ fontSize: '0.8rem', fontWeight: 'bold', opacity: 0.7, marginLeft: '5px' }}>Your Nickname</label>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#fff', padding: '5px 12px', borderRadius: '10px', border: '1px solid #eee' }}>
-                                    <User color="#ff4d6d" size={18} />
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.1 }}
+                                style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}
+                            >
+                                <label style={{ fontSize: '0.75rem', fontWeight: 'bold', opacity: 0.7, marginLeft: '5px' }}>Your Nickname</label>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#fff', padding: '4px 10px', borderRadius: '10px', border: '1px solid #eee' }}>
+                                    <User color="#ff4d6d" size={16} />
                                     <input
                                         type="text"
                                         placeholder="e.g. Jowie"
                                         value={playerName}
                                         onChange={(e) => setPlayerName(e.target.value)}
                                         autoFocus
-                                        style={{ border: 'none', padding: '8px', width: '100%', outline: 'none' }}
+                                        style={{ border: 'none', padding: '6px', width: '100%', outline: 'none', fontSize: '0.9rem', color: '#590d22', opacity: 0.8 }}
                                     />
                                 </div>
-                            </div>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                <label style={{ fontSize: '0.8rem', fontWeight: 'bold', opacity: 0.7, marginLeft: '5px' }}>Select Avatar</label>
-                                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center' }}>
-                                    {['🐻', '🐶', '🐱', '🦊', '🐰', '🐼', '🐸', '🐷', '🐨', '🐯', '🐧', '📷'].map((emoji, index) => {
-                                        if (index === 11) {
+                            </motion.div>
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.2 }}
+                                style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}
+                            >
+                                <label style={{ fontSize: '0.75rem', fontWeight: 'bold', opacity: 0.7, marginLeft: '5px' }}>Select Avatar</label>
+                                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', justifyContent: 'center' }}>
+                                    {['🐻', '🐶', '🐱', '🦊', '🐰', '🐼', '🐸', '🐷', '🐨', '🐯', '🐧', '🐢', '🦄', '📷'].map((emoji, index) => {
+                                        if (emoji === '📷') {
                                             const isImage = playerAvatar && playerAvatar.startsWith('data:image');
                                             return (
                                                 <button
@@ -100,8 +110,8 @@ const Lobby = ({
                                                         background: isImage ? '#fff0f3' : 'transparent',
                                                         cursor: 'pointer',
                                                         transition: 'all 0.2s',
-                                                        width: '40px',
-                                                        height: '40px',
+                                                        width: '36px',
+                                                        height: '36px',
                                                         display: 'flex',
                                                         alignItems: 'center',
                                                         justifyContent: 'center',
@@ -111,7 +121,7 @@ const Lobby = ({
                                                     {isImage ? (
                                                         <img src={playerAvatar} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                                     ) : (
-                                                        <Camera size={20} color={playerAvatar === emoji ? '#ff4d6d' : '#666'} />
+                                                        <Camera size={18} color={playerAvatar === emoji ? '#ff4d6d' : '#666'} />
                                                     )}
                                                 </button>
                                             );
@@ -122,16 +132,16 @@ const Lobby = ({
                                                 type="button"
                                                 onClick={() => setPlayerAvatar(emoji)}
                                                 style={{
-                                                    fontSize: '1.5rem',
-                                                    padding: '5px',
+                                                    fontSize: '1.3rem',
+                                                    padding: '4px',
                                                     borderRadius: '50%',
                                                     border: '2px solid',
                                                     borderColor: playerAvatar === emoji ? '#ff4d6d' : 'transparent',
                                                     background: playerAvatar === emoji ? '#fff0f3' : 'transparent',
                                                     cursor: 'pointer',
                                                     transition: 'all 0.2s',
-                                                    width: '40px',
-                                                    height: '40px',
+                                                    width: '36px',
+                                                    height: '36px',
                                                     display: 'flex',
                                                     alignItems: 'center',
                                                     justifyContent: 'center',
@@ -142,13 +152,18 @@ const Lobby = ({
                                         );
                                     })}
                                 </div>
-                            </div>
+                            </motion.div>
 
                             {!roomStatus.exists ? (
-                                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                        <label style={{ fontSize: '0.8rem', fontWeight: 'bold', opacity: 0.7, marginLeft: '5px' }}>Max Players</label>
-                                        <div style={{ display: 'flex', gap: '8px' }}>
+                                <motion.div
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.3 }}
+                                    style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}
+                                >
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                        <label style={{ fontSize: '0.7rem', fontWeight: 'bold', opacity: 0.7, marginLeft: '5px' }}>Max Players</label>
+                                        <div style={{ display: 'flex', gap: '4px' }}>
                                             {[2, 3, 4, 5, 6].map(num => (
                                                 <button
                                                     key={num}
@@ -156,15 +171,16 @@ const Lobby = ({
                                                     onClick={() => setMaxPlayersInput(num)}
                                                     style={{
                                                         flex: 1,
-                                                        padding: '10px 0',
-                                                        borderRadius: '10px',
+                                                        padding: '6px 0',
+                                                        borderRadius: '8px',
                                                         border: '2px solid',
                                                         borderColor: maxPlayersInput === num ? '#ff4d6d' : '#f0f0f0',
                                                         background: maxPlayersInput === num ? '#fff0f3' : '#fff',
                                                         color: maxPlayersInput === num ? '#ff4d6d' : '#666',
                                                         fontWeight: 'bold',
                                                         cursor: 'pointer',
-                                                        transition: 'all 0.2s'
+                                                        transition: 'all 0.2s',
+                                                        fontSize: '0.85rem'
                                                     }}
                                                 >
                                                     {num}
@@ -172,40 +188,50 @@ const Lobby = ({
                                             ))}
                                         </div>
                                     </div>
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                                        <label style={{ fontSize: '0.8rem', fontWeight: 'bold', opacity: 0.7, marginLeft: '5px' }}>Password (optional)</label>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#fff', padding: '5px 12px', borderRadius: '10px', border: '1px solid #eee' }}>
-                                            <Lock color="#ff4d6d" size={18} />
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                        <label style={{ fontSize: '0.7rem', fontWeight: 'bold', opacity: 0.7, marginLeft: '5px' }}>Password (optional)</label>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#fff', padding: '4px 10px', borderRadius: '10px', border: '1px solid #eee' }}>
+                                            <Lock color="#ff4d6d" size={14} />
                                             <input
                                                 type="password"
                                                 placeholder="Leave blank for public"
                                                 value={passwordInput}
                                                 onChange={(e) => setPasswordInput(e.target.value)}
-                                                style={{ border: 'none', padding: '8px', width: '100%', outline: 'none' }}
+                                                style={{ border: 'none', padding: '4px', width: '100%', outline: 'none', fontSize: '0.85rem' }}
                                             />
                                         </div>
                                     </div>
                                 </motion.div>
                             ) : roomStatus.hasPassword ? (
-                                <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                                    <label style={{ fontSize: '0.8rem', fontWeight: 'bold', opacity: 0.7, marginLeft: '5px' }}>Password</label>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#fff', padding: '5px 12px', borderRadius: '10px', border: '1px solid #eee' }}>
-                                        <Lock color="#ff4d6d" size={18} />
+                                <motion.div
+                                    initial={{ opacity: 0, y: -10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.3 }}
+                                    style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}
+                                >
+                                    <label style={{ fontSize: '0.75rem', fontWeight: 'bold', opacity: 0.7, marginLeft: '5px' }}>Password</label>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#fff', padding: '4px 12px', borderRadius: '10px', border: '1px solid #eee' }}>
+                                        <Lock color="#ff4d6d" size={16} />
                                         <input
                                             type="password"
                                             placeholder="Enter room password..."
                                             value={enteredPassword}
                                             onChange={(e) => setEnteredPassword(e.target.value)}
-                                            style={{ border: 'none', padding: '8px', width: '100%', outline: 'none' }}
+                                            style={{ border: 'none', padding: '6px', width: '100%', outline: 'none', fontSize: '0.9rem' }}
                                         />
                                     </div>
                                 </motion.div>
                             ) : null}
 
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                                <label style={{ fontSize: '0.8rem', fontWeight: 'bold', opacity: 0.7, marginLeft: '5px' }}>Room Code</label>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#fff0f3', padding: '5px 12px', borderRadius: '10px' }}>
-                                    <Heart color="#ff4d6d" fill="#ff4d6d" size={18} />
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.4 }}
+                                style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}
+                            >
+                                <label style={{ fontSize: '0.75rem', fontWeight: 'bold', opacity: 0.7, marginLeft: '5px' }}>Room Code</label>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#fff0f3', padding: '4px 12px', borderRadius: '10px' }}>
+                                    <Heart color="#ff4d6d" fill="#ff4d6d" size={16} />
                                     <input
                                         type="text"
                                         value={roomId}
@@ -214,15 +240,22 @@ const Lobby = ({
                                             setRoomStatus({ exists: false, count: 0 });
                                         }}
                                         placeholder="Room Code"
-                                        style={{ border: 'none', padding: '8px', width: '100%', outline: 'none', background: 'transparent', color: '#ff4d6d', fontWeight: 'bold' }}
+                                        style={{ border: 'none', padding: '6px', width: '100%', outline: 'none', background: 'transparent', color: '#ff4d6d', fontWeight: 'bold', fontSize: '0.9rem' }}
                                     />
                                 </div>
-                            </div>
+                            </motion.div>
                         </div>
 
-                        <button type="submit" className="btn" style={{ padding: '15px', fontSize: '1.2rem', marginTop: '10px' }}>
+                        <motion.button
+                            type="submit"
+                            className="btn"
+                            style={{ padding: '12px', fontSize: '1.1rem', marginTop: '5px' }}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.5 }}
+                        >
                             {!roomStatus.exists ? "Start & Invite Partners" : "Enter Journey"}
-                        </button>
+                        </motion.button>
                     </>
                 )}
             </form>

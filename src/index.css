@@ -22,8 +22,8 @@ body {
   font-family: 'Outfit', sans-serif;
   background: radial-gradient(circle at top left, #fff0f3, #ffe3e0);
   color: var(--text);
-  min-height: 100vh;
-  overflow-x: hidden;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .glass-panel {
@@ -36,10 +36,10 @@ body {
 
 .title {
   font-family: 'Pacifico', cursive;
-  font-size: 3rem;
+  font-size: clamp(2.5rem, 7vh, 4rem);
   color: var(--primary);
   text-align: center;
-  margin: 10px 0 0 0;
+  margin: 5px 0;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -47,17 +47,17 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0 20px 20px 20px;
+  padding: 15px;
 }
 
 .board {
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(10, 1fr);
-  width: 600px;
-  height: 600px;
+  width: min(76vh, 600px);
+  height: min(76vh, 600px);
   background: white;
-  border: 8px solid white;
+  border: 4px solid white;
   /* Inner white border */
   outline: 4px solid var(--primary);
   /* Outer pink border */
@@ -70,7 +70,7 @@ body {
   border: 1px solid #fee3e0;
   position: relative;
   font-weight: 800;
-  font-size: 0.85rem;
+  font-size: clamp(0.6rem, 1.2vh, 0.85rem);
   color: #ff5c7a;
   background: white;
   transition: background 0.3s ease;
@@ -109,8 +109,8 @@ body {
 }
 
 .player-token {
-  width: 30px;
-  height: 30px;
+  width: min(5vh, 40px);
+  height: min(5vh, 40px);
   border-radius: 50%;
   position: absolute;
   z-index: 10;
@@ -119,22 +119,22 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 12px;
+  font-size: min(2vh, 20px);
   color: white;
 }
 
 .controls {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  bottom: 15px;
+  right: 15px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 10px;
   z-index: 100;
 }
 
 .btn {
-  padding: 12px 24px;
+  padding: 10px 20px;
   border-radius: 30px;
   border: none;
   background: var(--primary);
@@ -146,7 +146,7 @@ body {
   cursor: pointer;
   box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
   transition: all 0.3s ease;
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 .btn:hover {
@@ -212,7 +212,7 @@ body {
   flex-direction: column;
   gap: 20px;
   z-index: 100;
-  width: 250px;
+  width: 240px;
 }
 
 .info-panel {
@@ -237,7 +237,7 @@ body {
   font-weight: bold;
   color: var(--primary);
   margin-top: 10px;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
 }
 
 @keyframes float {

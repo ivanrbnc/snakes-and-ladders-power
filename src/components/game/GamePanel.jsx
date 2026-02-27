@@ -6,7 +6,7 @@ const GamePanel = ({ roomData, roomId, myPlayerId, rollDice, isRolling, copyRoom
     return (
         <>
             <div className="info-panel glass-panel">
-                <h3 style={{ marginBottom: '15px' }}>Players in the room</h3>
+                <h3 style={{ marginBottom: '15px', fontSize: '1.2rem' }}>Players in the room</h3>
                 {roomData?.players.map(p => (
                     <div key={p.id} className="player-info" style={{ opacity: roomData.players[roomData.turn]?.id === p.id ? 1 : 0.6 }}>
                         <div className="color-dot" style={{ backgroundColor: p.color }} />

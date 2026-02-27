@@ -25,7 +25,7 @@ const PowerInventory = ({ players, myPlayerId, onUseCard, isMyTurn, disabled }) 
     return (
         <div className="power-inventory glass-panel">
             <h3 className="inventory-title">
-                <Zap size={18} fill="#ffb703" color="#ffb703" style={{ marginRight: '8px' }} />
+                <Zap size={18} fill="#ffb703" color="#ffb703" style={{ marginRight: '8px', flexShrink: 0 }} />
                 Power Cards ({cards.length}/3)
             </h3>
 
@@ -78,9 +78,12 @@ const PowerInventory = ({ players, myPlayerId, onUseCard, isMyTurn, disabled }) 
                     display: flex;
                     align-items: center;
                     margin-bottom: 20px;
-                    font-size: 1.17em;
+                    font-size: 1.1rem;
                     font-weight: bold;
                     color: inherit;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
                 .cards-list {
                     display: flex;

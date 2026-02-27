@@ -60,7 +60,7 @@ const Board = ({ roomData, renderVisuals }) => {
                                 color: '#ff4d6d',
                                 zIndex: 1
                             }}>
-                                <Heart fill="#ff4d6d" size={32} />
+                                <Heart fill="#ff4d6d" size={30} />
                             </div>
                         )}
                         {isPowerSquare && (
@@ -73,7 +73,7 @@ const Board = ({ roomData, renderVisuals }) => {
                                 color: '#ffb703',
                                 zIndex: 1
                             }}>
-                                <Zap fill="#ffb703" size={32} />
+                                <Zap fill="#ffb703" size={30} />
                             </div>
                         )}
                     </div>
@@ -332,7 +332,7 @@ const Board = ({ roomData, renderVisuals }) => {
         const boardExtras = roomData?.FULL_BOARD_EXTRAS || FULL_BOARD_EXTRAS;
 
         return (
-            <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 5, overflow: 'visible' }}>
+            <svg viewBox="0 0 600 600" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 5, overflow: 'visible' }}>
                 {Object.entries(boardExtras).map(([start, end]) => {
                     const s = parseInt(start);
                     const e = parseInt(end);

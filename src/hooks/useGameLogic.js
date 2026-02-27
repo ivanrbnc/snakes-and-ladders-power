@@ -139,7 +139,7 @@ export const useGameLogic = () => {
                 }, 80);
             })
             .on('broadcast', { event: 'dice_rolled' }, async ({ payload }) => {
-                const { diceValue, playerId, name, startPosition, newPosition, isSpecial, specialType, nextTurn, loveCard, foundPowerCard } = payload;
+                const { diceValue, playerId, name, startPosition, newPosition, isSpecial, specialType, nextTurn, loveCardIndex, foundPowerCard } = payload;
                 if (window.diceInterval) clearInterval(window.diceInterval);
                 setRollingValue(diceValue);
                 setRollingPlayer(name);
@@ -181,7 +181,7 @@ export const useGameLogic = () => {
                     const newPlayers = prev.players.map(p => p.id === playerId ? { ...p, position: newPosition } : p);
                     return { ...prev, players: newPlayers, turn: nextTurn };
                 });
-                if (loveCard !== null && loveCard !== undefined) setTimeout(() => setCurrentCard(LDR_CARDS[loveCard]), 500);
+                if (loveCardIndex !== null && loveCardIndex !== undefined) setTimeout(() => setCurrentCard(LDR_CARDS[loveCardIndex]), 500);
                 if (playerId === myPlayerId.current && foundPowerCard) {
                     const card = POWER_CARDS.find(c => c.id === foundPowerCard);
                     if (card) setPendingPowerCard(card);
@@ -287,9 +287,9 @@ export const useGameLogic = () => {
             const foundPower = (currentRoomForRoll.powerSquares || []).includes(finalPosition) ? POWER_CARDS[Math.floor(Math.random() * POWER_CARDS.length)] : null;
             const nextTurn = (currentRoomForRoll.turn + 1) % currentRoomForRoll.players.length;
             const updatedPlayers = currentRoomForRoll.players.map(p => p.id === myPlayerId.current ? { ...p, position: finalPosition, nextRollGuaranteed: null } : p);
-            const updatedRoom = { ...currentRoomForRoll, players: updatedPlayers, turn: nextTurn };
+            const updatedRoom = { ...currentRoomForRoll, players: updatedPlayers, turn: nextTurn, gameStarted: true };
             await supabase.from('rooms').update({ data: updatedRoom }).eq('id', roomId);
-            channelRef.current.send({ type: 'broadcast', event: 'dice_rolled', payload: { diceValue, playerId: myPlayerId.current, name: player.name, startPosition, newPosition: finalPosition, isSpecial, specialType: isSpecial ? (finalPosition > newPos ? 'ladder' : 'snake') : null, nextTurn, loveCard, foundPowerCard: foundPower?.id || null } });
+            channelRef.current.send({ type: 'broadcast', event: 'dice_rolled', payload: { diceValue, playerId: myPlayerId.current, name: player.name, startPosition, newPosition: finalPosition, isSpecial, specialType: isSpecial ? (finalPosition > newPos ? 'ladder' : 'snake') : null, nextTurn, loveCardIndex: loveCard, foundPowerCard: foundPower?.id || null } });
             if (finalPosition === 100) channelRef.current.send({ type: 'broadcast', event: 'game_over', payload: { winner: player.name } });
         }, 1200);
     };
