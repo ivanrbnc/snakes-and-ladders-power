@@ -8,9 +8,11 @@ const CameraCapture = ({ onCapture, onCancel }) => {
     const [hasCamera, setHasCamera] = useState(true);
 
     useEffect(() => {
+        let currentStream = null;
         const startCamera = async () => {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+                currentStream = stream;
                 if (videoRef.current) {
                     videoRef.current.srcObject = stream;
                 }
@@ -23,8 +25,8 @@ const CameraCapture = ({ onCapture, onCancel }) => {
         startCamera();
 
         return () => {
-            if (videoRef.current && videoRef.current.srcObject) {
-                videoRef.current.srcObject.getTracks().forEach(track => track.stop());
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
             }
         };
     }, []);

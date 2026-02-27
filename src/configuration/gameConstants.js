@@ -26,7 +26,7 @@ export const LDR_CARDS = [
     "If I appeared in your dreams tonight, what would we be doing? ✨",
     "What's one little habit of mine that secretly melts you? 🥰",
     "Describe — in detail — how you'd kiss me if our lips could meet now.",
-    "Let's play quick Truth or Dare right now — your turn.",
+    "Let's play quick Truth or Dare right now.",
     "If distance disappeared this second, how would this video call end?",
     "Play 10–15 seconds of the song that always puts you in the mood for me.",
 ];
