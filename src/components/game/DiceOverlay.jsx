@@ -18,7 +18,7 @@ const DiceOverlay = ({ isRolling, hasLanded, rollingValue, rollingPlayer }) => {
                     scale: [1, 1.3, 1],
                     y: [0, -20, 0]
                 }}
-                transition={hasLanded ? { duration: 0.2 } : { repeat: Infinity, duration: 0.4 }}
+                transition={hasLanded ? { duration: 0.2 } : { repeat: Infinity, duration: 0.6, type: "tween", ease: "linear" }}
                 style={{
                     fontSize: '8rem',
                     filter: 'drop-shadow(0 10px 15px rgba(0,0,0,0.3))',

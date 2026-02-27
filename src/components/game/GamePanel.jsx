@@ -10,8 +10,9 @@ const GamePanel = ({ roomData, roomId, myPlayerId, rollDice, isRolling, copyRoom
                 {roomData?.players.map(p => (
                     <div key={p.id} className="player-info" style={{ opacity: roomData.players[roomData.turn]?.id === p.id ? 1 : 0.6 }}>
                         <div className="color-dot" style={{ backgroundColor: p.color }} />
-                        <span style={{ fontWeight: roomData.players[roomData.turn]?.id === p.id ? 'bold' : 'normal' }}>
-                            {p.name} {p.id === myPlayerId ? "(You)" : ""}
+                        <span style={{ fontWeight: roomData.players[roomData.turn]?.id === p.id ? 'bold' : 'normal', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            {p.avatar ? <span>{p.avatar}</span> : null}
+                            <span>{p.name} {p.id === myPlayerId ? "(You)" : ""}</span>
                         </span>
                     </div>
                 ))}

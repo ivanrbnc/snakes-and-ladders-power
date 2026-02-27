@@ -49,7 +49,7 @@ const Board = ({ roomData, renderVisuals }) => {
                         position: 'relative',
                         background: isLoveSquare ? 'rgba(255, 117, 143, 0.1)' : (isPowerSquare ? 'rgba(255, 183, 3, 0.1)' : 'transparent')
                     }}>
-                        <span style={{ position: 'relative', zIndex: 2 }}>{num}</span>
+                        <span className="cell-number">{num}</span>
                         {isLoveSquare && (
                             <div style={{
                                 position: 'absolute',
@@ -60,7 +60,7 @@ const Board = ({ roomData, renderVisuals }) => {
                                 color: '#ff4d6d',
                                 zIndex: 1
                             }}>
-                                <Heart fill="#ff4d6d" size={40} />
+                                <Heart fill="#ff4d6d" size={32} />
                             </div>
                         )}
                         {isPowerSquare && (
@@ -73,7 +73,7 @@ const Board = ({ roomData, renderVisuals }) => {
                                 color: '#ffb703',
                                 zIndex: 1
                             }}>
-                                <Zap fill="#ffb703" size={40} />
+                                <Zap fill="#ffb703" size={32} />
                             </div>
                         )}
                     </div>

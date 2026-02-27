@@ -13,6 +13,7 @@ import {
 export const useGameLogic = () => {
     const [roomId, setRoomId] = useState('');
     const [playerName, setPlayerName] = useState('');
+    const [playerAvatar, setPlayerAvatar] = useState('🐻');
     const [inRoom, setInRoom] = useState(false);
     const [roomData, setRoomData] = useState(null);
     const [diceRoll, setDiceRoll] = useState(1);
@@ -235,7 +236,7 @@ export const useGameLogic = () => {
         if (!roomRow || !roomRow.data || !roomRow.data.players || roomRow.data.players.length === 0) {
             const colors = ['#ff4d6d', '#4d96ff', '#52b788', '#ffb703', '#9b5de5', '#f15bb5'];
             room = {
-                players: [{ id: myPlayerId.current, name: playerName, position: 1, color: colors[0], powerCards: [], protected: false, skippingTurn: false, nextRollGuaranteed: null }],
+                players: [{ id: myPlayerId.current, name: playerName, avatar: playerAvatar, position: 1, color: colors[0], powerCards: [], protected: false, skippingTurn: false, nextRollGuaranteed: null }],
                 turn: 0, gameStarted: false, cardIndex: 0, maxPlayers: parseInt(maxPlayersInput) || 2, password: passwordInput || null, roomId,
                 loveSquares: generateLoveSquares(), powerSquares: []
             };
@@ -247,7 +248,7 @@ export const useGameLogic = () => {
             if (!room.players.find(p => p.id === myPlayerId.current)) {
                 if (room.players.length < room.maxPlayers) {
                     const colors = ['#ff4d6d', '#4d96ff', '#52b788', '#ffb703', '#9b5de5', '#f15bb5'];
-                    room.players.push({ id: myPlayerId.current, name: playerName, position: 1, color: colors[room.players.length % colors.length], powerCards: [], protected: false, skippingTurn: false, nextRollGuaranteed: null });
+                    room.players.push({ id: myPlayerId.current, name: playerName, avatar: playerAvatar, position: 1, color: colors[room.players.length % colors.length], powerCards: [], protected: false, skippingTurn: false, nextRollGuaranteed: null });
                     await supabase.from('rooms').update({ data: room }).eq('id', roomId);
                 } else return addToast("Room is full!");
             }
@@ -408,6 +409,6 @@ export const useGameLogic = () => {
     };
 
     return {
-        roomId, setRoomId, playerName, setPlayerName, inRoom, roomData, isRolling, rollingPlayer, currentCard, setCurrentCard, winner, roomStatus, setRoomStatus, visualPositions, toasts, maxPlayersInput, setMaxPlayersInput, passwordInput, setPasswordInput, enteredPassword, setEnteredPassword, showPasswordPrompt, setShowPasswordPrompt, rollingValue, hasLanded, pendingPowerCard, setPendingPowerCard, targetSelection, setTargetSelection, hasRolledThisTurn, myPlayerId, joinRoom, rollDice, handlePowerCardChoice, onUseCardFromInventory, executePowerCard, copyRoomLink, setDebugRoll
+        roomId, setRoomId, playerName, setPlayerName, playerAvatar, setPlayerAvatar, inRoom, roomData, isRolling, rollingPlayer, currentCard, setCurrentCard, winner, roomStatus, setRoomStatus, visualPositions, toasts, maxPlayersInput, setMaxPlayersInput, passwordInput, setPasswordInput, enteredPassword, setEnteredPassword, showPasswordPrompt, setShowPasswordPrompt, rollingValue, hasLanded, pendingPowerCard, setPendingPowerCard, targetSelection, setTargetSelection, hasRolledThisTurn, myPlayerId, joinRoom, rollDice, handlePowerCardChoice, onUseCardFromInventory, executePowerCard, copyRoomLink, setDebugRoll
     };
 };

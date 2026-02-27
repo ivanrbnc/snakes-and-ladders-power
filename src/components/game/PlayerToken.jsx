@@ -9,12 +9,12 @@ const PlayerToken = ({ player, pos, getPositionCoords }) => {
         <motion.div
             key={player.id}
             className="player-token"
-            style={{ backgroundColor: player.color }}
+            style={{ backgroundColor: player.color, fontSize: '18px' }}
             initial={false}
             animate={{ left: coords.x, top: coords.y }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
         >
-            <User size={16} />
+            {player.avatar || <User size={16} />}
         </motion.div>
     );
 };

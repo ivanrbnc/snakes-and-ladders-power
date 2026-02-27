@@ -68,14 +68,20 @@ body {
 
 .cell {
   border: 1px solid #fee3e0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   position: relative;
   font-weight: 800;
-  font-size: 0.9rem;
-  color: #ffb3c1;
+  font-size: 0.85rem;
+  color: #ff5c7a;
   background: white;
+  transition: background 0.3s ease;
+}
+
+.cell-number {
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  z-index: 2;
+  opacity: 0.8;
 }
 
 .cell:nth-child(even) {
@@ -198,11 +204,19 @@ body {
   font-size: 1.5rem;
 }
 
-.info-panel {
+.side-panel-container {
   position: fixed;
   top: 20px;
   left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  z-index: 100;
   width: 250px;
+}
+
+.info-panel {
+  width: 100%;
   padding: 20px;
 }
 

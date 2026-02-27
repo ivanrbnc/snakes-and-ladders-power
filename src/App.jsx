@@ -25,7 +25,7 @@ import { getPositionCoords } from './utils/gameUtils';
 
 function App() {
   const {
-    roomId, setRoomId, playerName, setPlayerName, inRoom, roomData, isRolling, rollingPlayer,
+    roomId, setRoomId, playerName, setPlayerName, playerAvatar, setPlayerAvatar, inRoom, roomData, isRolling, rollingPlayer,
     currentCard, setCurrentCard, winner, roomStatus, setRoomStatus, visualPositions, toasts,
     maxPlayersInput, setMaxPlayersInput, passwordInput, setPasswordInput,
     enteredPassword, setEnteredPassword, showPasswordPrompt, setShowPasswordPrompt,
@@ -44,6 +44,8 @@ function App() {
           roomStatus={roomStatus}
           playerName={playerName}
           setPlayerName={setPlayerName}
+          playerAvatar={playerAvatar}
+          setPlayerAvatar={setPlayerAvatar}
           maxPlayersInput={maxPlayersInput}
           setMaxPlayersInput={setMaxPlayersInput}
           passwordInput={passwordInput}
@@ -60,15 +62,25 @@ function App() {
         <div className="game-container">
           <h1 className="title">Snakes & Ladders</h1>
 
-          <GamePanel
-            roomData={roomData}
-            roomId={roomId}
-            myPlayerId={myPlayerId.current}
-            rollDice={rollDice}
-            isRolling={isRolling}
-            copyRoomLink={copyRoomLink}
-            setDebugRoll={setDebugRoll}
-          />
+          <div className="side-panel-container">
+            <GamePanel
+              roomData={roomData}
+              roomId={roomId}
+              myPlayerId={myPlayerId.current}
+              rollDice={rollDice}
+              isRolling={isRolling}
+              copyRoomLink={copyRoomLink}
+              setDebugRoll={setDebugRoll}
+            />
+
+            <PowerInventory
+              players={roomData?.players || []}
+              myPlayerId={myPlayerId.current}
+              onUseCard={onUseCardFromInventory}
+              isMyTurn={roomData?.players && roomData.players[roomData.turn]?.id === myPlayerId.current}
+              disabled={!!pendingPowerCard || !!targetSelection || hasRolledThisTurn}
+            />
+          </div>
 
           <Board
             roomData={roomData}
@@ -94,14 +106,6 @@ function App() {
           />
 
           <LoveCard currentCard={currentCard} setCurrentCard={setCurrentCard} />
-
-          <PowerInventory
-            players={roomData?.players || []}
-            myPlayerId={myPlayerId.current}
-            onUseCard={onUseCardFromInventory}
-            isMyTurn={roomData?.players && roomData.players[roomData.turn]?.id === myPlayerId.current}
-            disabled={!!pendingPowerCard || !!targetSelection || hasRolledThisTurn}
-          />
 
           <AnimatePresence>
             <PowerFoundModal

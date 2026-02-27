@@ -6,6 +6,8 @@ const Lobby = ({
     roomStatus,
     playerName,
     setPlayerName,
+    playerAvatar,
+    setPlayerAvatar,
     maxPlayersInput,
     setMaxPlayersInput,
     passwordInput,
@@ -73,6 +75,35 @@ const Lobby = ({
                                         autoFocus
                                         style={{ border: 'none', padding: '8px', width: '100%', outline: 'none' }}
                                     />
+                                </div>
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                <label style={{ fontSize: '0.8rem', fontWeight: 'bold', opacity: 0.7, marginLeft: '5px' }}>Select Avatar</label>
+                                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center' }}>
+                                    {['🐻', '🐶', '🐱', '🦊', '🐰', '🐼', '🐸', '🐷', '🐨', '🐯', '🐧', '🐢'].map(emoji => (
+                                        <button
+                                            key={emoji}
+                                            type="button"
+                                            onClick={() => setPlayerAvatar(emoji)}
+                                            style={{
+                                                fontSize: '1.5rem',
+                                                padding: '5px',
+                                                borderRadius: '50%',
+                                                border: '2px solid',
+                                                borderColor: playerAvatar === emoji ? '#ff4d6d' : 'transparent',
+                                                background: playerAvatar === emoji ? '#fff0f3' : 'transparent',
+                                                cursor: 'pointer',
+                                                transition: 'all 0.2s',
+                                                width: '40px',
+                                                height: '40px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                            }}
+                                        >
+                                            {emoji}
+                                        </button>
+                                    ))}
                                 </div>
                             </div>
 
