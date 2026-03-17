@@ -9,26 +9,37 @@ export const FULL_BOARD_EXTRAS = {
 export const LDR_CARDS = [
     "What made you smile today? Show me that smile right now.",
     "Tell me one thing you miss about me… and point to where you feel it most.",
+    "Set a timer. Plan your next date in 30 seconds.",
     "Describe your perfect date once we're finally in the same place.",
+    "What was the best part of your day?",
     "What's a song that reminds you of us? Play a few seconds for me.",
     "If I could appear in your room for 5 minutes right now, what would we do?",
-    "What's the first thing we'll eat together when we reunite? Make me hungry 😏",
+    "What's the first thing we'll eat together when we reunite?",
     "Give me your cutest look right now.",
-    "Tell me a joke.",
-    "Give me your sexiest look right now.",
-    "Show me (or tell me) which part of my body you miss the most.",
-    "What's something cute you've noticed about me lately? 👀❤️",
-    "What's one tiny thing you miss about me right this second? 💕",
-    "Describe the hug or cuddle you're craving from me most 🫂",
+    "How do you see our relationship growing?",
+    "If we can't say anything to each other now, what will happen later, when we meet?",
+    "Describe the hug or cuddle you're craving from me most!",
+    "Confess a thought about the other player.",
     "What's your favorite intimate memory of us?",
+    "When did you know you had feelings for me?",
+    "What’s something I do that always makes you smile?",
+    "If you could choose anywhere in the world for us to live together, where would it be?",
+    "What is a place from your past that you would love to visit with me?",
+    "Ask each other random question!",
+    "What’s a good thing about the way we handle conflict? What’s one thing that could be improved?",
+    "When do you feel most secure in our relationship?",
+    "What are the little things that your partner makes you happy?",
+    "What do you think are your strength as a partner?",
+    "What do you think makes us 'click'?",
     "If we were sharing this bed right now, where would your hands go first?",
     "Tell me one fantasy you've had about us in the last few days.",
-    "If I appeared in your dreams tonight, what would we be doing? ✨",
+    "What would you do if your partner forbade you to do something you enjoy?",
+    "Tell me about the time when you felt most jealous.",
     "What's one little habit of mine that secretly melts you? 🥰",
-    "Describe — in detail — how you'd kiss me if our lips could meet now.",
-    "Let's play quick Truth or Dare right now.",
-    "If distance disappeared this second, how would this video call end?",
     "Play 10–15 seconds of the song that always puts you in the mood for me.",
+    "What’s something I could do more often to support you?",
+    "What’s the difference between this relationship and your past ones?",
+    "How do you feel of each other right now?"
 ];
 
 export const TOTAL_LOVE_CARDS = LDR_CARDS.length;
@@ -70,11 +81,11 @@ const generateDistributedSquares = (count, excludes = []) => {
 };
 
 export const generateLoveSquares = () => {
-    return generateDistributedSquares(20);
+    return generateDistributedSquares(22);
 };
 
 export const generatePowerSquares = (loveSquares) => {
-    return generateDistributedSquares(12, loveSquares);
+    return generateDistributedSquares(20, loveSquares);
 };
 
 export const POWER_CARDS = [
