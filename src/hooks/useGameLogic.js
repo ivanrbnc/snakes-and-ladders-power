@@ -290,8 +290,7 @@ export const useGameLogic = () => {
                 }
             })
             .on('broadcast', { event: 'chat_message' }, ({ payload }) => {
-                const { id, playerId, name, color, text } = payload;
-                setChatMessages(prev => [...prev.slice(-99), { id, playerId, name, color, text }]);
+                setChatMessages(prev => [...prev.slice(-99), payload]);
             })
             .on('postgres_changes', { event: '*', schema: 'public', table: 'rooms', filter: `id=eq.${roomId}` }, (payload) => {
                 const newData = payload.new?.data;
@@ -520,11 +519,11 @@ export const useGameLogic = () => {
 
     const copyRoomLink = () => { navigator.clipboard.writeText(window.location.href); addToast("Link copied! 📋"); };
 
-    const sendChat = async (text) => {
+    const sendChat = async (payload) => {
         if (!channelRef.current || !roomData) return;
         const me = roomData.players.find(p => p.id === myPlayerId.current);
         if (!me) return;
-        const msg = { id: crypto.randomUUID(), playerId: myPlayerId.current, name: me.name, color: me.color, text };
+        const msg = { id: crypto.randomUUID(), playerId: myPlayerId.current, name: me.name, color: me.color, ...payload };
         channelRef.current.send({ type: 'broadcast', event: 'chat_message', payload: msg });
         const chatMessages = [...(roomData.chatMessages || []).slice(-99), msg];
         await supabase.from('rooms').update({ data: { ...roomData, chatMessages } }).eq('id', roomId);

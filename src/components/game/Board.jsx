@@ -2,7 +2,7 @@ import React from 'react';
 import { Heart, Zap } from 'lucide-react';
 import { FULL_BOARD_EXTRAS } from '../../configuration/gameConstants';
 
-const Board = ({ roomData, renderVisuals, activeJump }) => {
+const Board = ({ roomData, renderVisuals, activeJump, isMobile = false }) => {
     const getSquareCoords = (pos, isJump = false, seed = 0) => {
         const row = Math.floor((pos - 1) / 10);
         const col = (pos - 1) % 10;
@@ -60,7 +60,7 @@ const Board = ({ roomData, renderVisuals, activeJump }) => {
                                 color: '#ff4d6d',
                                 zIndex: 1
                             }}>
-                                <Heart fill="#ff4d6d" size={30} />
+                                <Heart fill="#ff4d6d" size={isMobile ? 20 : 30} />
                             </div>
                         )}
                         {isPowerSquare && (
@@ -73,7 +73,7 @@ const Board = ({ roomData, renderVisuals, activeJump }) => {
                                 color: '#ffb703',
                                 zIndex: 1
                             }}>
-                                <Zap fill="#ffb703" size={30} />
+                                <Zap fill="#ffb703" size={isMobile ? 20 : 30} />
                             </div>
                         )}
                     </div>
@@ -103,8 +103,8 @@ const Board = ({ roomData, renderVisuals, activeJump }) => {
         ];
         const pal = palettes[idx % palettes.length];
 
-        const railWidth = 6;
-        const ladderWidth = 18;
+        const railWidth = isMobile ? 4 : 6;
+        const ladderWidth = isMobile ? 12 : 18;
         const numRungs = Math.max(3, Math.floor(length / 25));
         const shadowId = `ladShadow${idx}`;
         const gradId = `ladGrad${idx}`;
@@ -269,7 +269,7 @@ const Board = ({ roomData, renderVisuals, activeJump }) => {
                     d={pathD}
                     fill="none"
                     stroke="#00000040"
-                    strokeWidth="13"
+                    strokeWidth={isMobile ? 8 : 13}
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     transform="translate(2,3)"
@@ -280,7 +280,7 @@ const Board = ({ roomData, renderVisuals, activeJump }) => {
                     d={pathD}
                     fill="none"
                     stroke={`url(#${bodyGradId})`}
-                    strokeWidth="11"
+                    strokeWidth={isMobile ? 7 : 11}
                     strokeLinecap="round"
                     strokeLinejoin="round"
                 />
@@ -290,7 +290,7 @@ const Board = ({ roomData, renderVisuals, activeJump }) => {
                     d={pathD}
                     fill="none"
                     stroke={`url(#${scalePatId})`}
-                    strokeWidth="11"
+                    strokeWidth={isMobile ? 7 : 11}
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     opacity="0.6"
@@ -301,7 +301,7 @@ const Board = ({ roomData, renderVisuals, activeJump }) => {
                     d={pathD}
                     fill="none"
                     stroke={pal.belly}
-                    strokeWidth="4"
+                    strokeWidth={isMobile ? 2.5 : 4}
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeDasharray="6,8"
@@ -311,27 +311,27 @@ const Board = ({ roomData, renderVisuals, activeJump }) => {
                 {/* Head */}
                 <g transform={`translate(${headX}, ${headY}) rotate(${headAngle})`}>
                     {/* Head shape */}
-                    <ellipse cx="0" cy="0" rx="10" ry="8" fill={pal.body} filter={`url(#${shadowId})`} />
-                    <ellipse cx="0" cy="0" rx="10" ry="8" fill={scaleColor} opacity="0.2" />
+                    <ellipse cx="0" cy="0" rx={isMobile ? 7 : 10} ry={isMobile ? 5 : 8} fill={pal.body} filter={`url(#${shadowId})`} />
+                    <ellipse cx="0" cy="0" rx={isMobile ? 7 : 10} ry={isMobile ? 5 : 8} fill={scaleColor} opacity="0.2" />
                     {/* Nostrils */}
-                    <circle cx="7" cy="-3" r="1.2" fill={pal.bodyDark} />
-                    <circle cx="7" cy="3" r="1.2" fill={pal.bodyDark} />
+                    <circle cx={isMobile ? 5 : 7} cy="-3" r={isMobile ? 0.8 : 1.2} fill={pal.bodyDark} />
+                    <circle cx={isMobile ? 5 : 7} cy="3" r={isMobile ? 0.8 : 1.2} fill={pal.bodyDark} />
                     {/* Eyes */}
-                    <circle cx="3" cy="-4.5" r="3" fill={pal.eye} />
-                    <circle cx="3" cy="4.5" r="3" fill={pal.eye} />
-                    <circle cx="4" cy="-4.5" r="1.5" fill="#111" />
-                    <circle cx="4" cy="4.5" r="1.5" fill="#111" />
-                    <circle cx="4.5" cy="-5" r="0.5" fill="white" opacity="0.8" />
-                    <circle cx="4.5" cy="4" r="0.5" fill="white" opacity="0.8" />
+                    <circle cx="3" cy={isMobile ? -3 : -4.5} r={isMobile ? 2 : 3} fill={pal.eye} />
+                    <circle cx="3" cy={isMobile ? 3 : 4.5} r={isMobile ? 2 : 3} fill={pal.eye} />
+                    <circle cx="4" cy={isMobile ? -3 : -4.5} r={isMobile ? 1 : 1.5} fill="#111" />
+                    <circle cx="4" cy={isMobile ? 3 : 4.5} r={isMobile ? 1 : 1.5} fill="#111" />
+                    <circle cx="4.5" cy={isMobile ? -3.5 : -5} r="0.5" fill="white" opacity="0.8" />
+                    <circle cx="4.5" cy={isMobile ? 2.5 : 4} r="0.5" fill="white" opacity="0.8" />
                     {/* Tongue */}
-                    <line x1="9" y1="0" x2="15" y2="0" stroke={pal.tongue} strokeWidth="1.5" strokeLinecap="round" />
-                    <line x1="15" y1="0" x2="18" y2="-2.5" stroke={pal.tongue} strokeWidth="1" strokeLinecap="round" />
-                    <line x1="15" y1="0" x2="18" y2="2.5" stroke={pal.tongue} strokeWidth="1" strokeLinecap="round" />
+                    <line x1={isMobile ? 6 : 9} y1="0" x2={isMobile ? 10 : 15} y2="0" stroke={pal.tongue} strokeWidth="1.5" strokeLinecap="round" />
+                    <line x1={isMobile ? 10 : 15} y1="0" x2={isMobile ? 12 : 18} y2="-2.5" stroke={pal.tongue} strokeWidth="1" strokeLinecap="round" />
+                    <line x1={isMobile ? 10 : 15} y1="0" x2={isMobile ? 12 : 18} y2="2.5" stroke={pal.tongue} strokeWidth="1" strokeLinecap="round" />
                 </g>
 
                 {/* Tail tip at start (tapered) */}
-                <circle cx={startCoords.x} cy={startCoords.y} r="4" fill={pal.bodyDark} />
-                <circle cx={startCoords.x} cy={startCoords.y} r="2" fill={pal.belly} opacity="0.6" />
+                <circle cx={startCoords.x} cy={startCoords.y} r={isMobile ? 2.5 : 4} fill={pal.bodyDark} />
+                <circle cx={startCoords.x} cy={startCoords.y} r={isMobile ? 1.5 : 2} fill={pal.belly} opacity="0.6" />
 
                 {isActive && (
                     <path

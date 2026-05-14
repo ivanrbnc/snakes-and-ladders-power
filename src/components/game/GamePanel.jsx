@@ -42,20 +42,21 @@ const GamePanel = ({ roomData, myPlayerId, rollDice, isRolling, copyRoomLink, hi
                     );
                 })}
 
-                <div className="turn-indicator" style={{ marginTop: isMobile ? '8px' : '15px', fontSize: isMobile ? '0.8rem' : undefined }}>
-                    {roomData?.players.length < (roomData?.maxPlayers || 2)
-                        ? <span style={{ fontSize: isMobile ? '0.78rem' : '0.94rem', opacity: 0.8, fontWeight: 'normal' }}>Waiting for players... ⏳</span>
-                        : roomData.players[roomData.turn]?.id === myPlayerId
+                {roomData?.players.length < (roomData?.maxPlayers || 2)
+                    ? <p style={{ marginTop: isMobile ? '8px' : '15px', fontSize: isMobile ? '0.78rem' : '0.9rem', color: '#ff4d6d', fontStyle: 'italic', fontWeight: 600 }}>Waiting for players... ⏳</p>
+                    : <div className="turn-indicator" style={{ marginTop: isMobile ? '8px' : '15px', fontSize: isMobile ? '0.8rem' : undefined }}>
+                        {roomData.players[roomData.turn]?.id === myPlayerId
                             ? "It's Your Turn! 🎲"
                             : `Waiting for ${roomData.players[roomData.turn]?.name || "..."}`}
-                </div>
+                    </div>
+                }
 
                 {!hideCopyLink && (
                     <button
                         className="btn love-btn"
                         onClick={copyRoomLink}
                         style={{
-                            marginTop: isMobile ? '6px' : '20px',
+                            marginTop: isMobile ? '12px' : '20px',
                             background: 'rgba(255, 77, 109, 0.1)',
                             color: '#ff4d6d',
                             fontSize: isMobile ? '0.78rem' : '0.9rem',

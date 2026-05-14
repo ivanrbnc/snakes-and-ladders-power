@@ -13,8 +13,8 @@ const MobileLayout = ({ board, gamePanel, powerInventory, gameLog, gameChat, rol
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', height: '100dvh', overflow: 'hidden' }}>
-            {/* Board */}
-            <div style={{ flexShrink: 0, display: 'flex', justifyContent: 'center', alignItems: 'center', height: 'min(70vw, 70vh)', overflow: 'hidden' }}>
+            {/* Board — grows to fill space not taken by tabs + roll button */}
+            <div style={{ flex: 1, minHeight: 0, display: 'flex', justifyContent: 'center', alignItems: 'center', overflow: 'hidden' }}>
                 {board}
             </div>
 
@@ -47,8 +47,8 @@ const MobileLayout = ({ board, gamePanel, powerInventory, gameLog, gameChat, rol
                 ))}
             </div>
 
-            {/* Panel content — flex column, overflow hidden so each tab controls its own scroll */}
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden', background: 'rgba(255,240,243,0.5)' }}>
+            {/* Panel content — fixed height so board above gets all remaining space */}
+            <div style={{ height: '28dvh', flexShrink: 0, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden', background: 'rgba(255,240,243,0.5)' }}>
                 {/* Scrollable tabs */}
                 {activeTab !== 'chat' && (
                     <div style={{ flex: 1, overflowY: 'auto', padding: '10px 12px 4px', minHeight: 0 }}>
@@ -58,7 +58,7 @@ const MobileLayout = ({ board, gamePanel, powerInventory, gameLog, gameChat, rol
                                 <button
                                     className="btn love-btn"
                                     onClick={onCopyLink}
-                                    style={{ marginTop: '2px', background: 'rgba(255,77,109,0.1)', color: '#ff4d6d', fontSize: '0.88rem', padding: '8px 20px', width: 'fit-content' }}
+                                    style={{ marginTop: '14px', background: 'rgba(255,77,109,0.1)', color: '#ff4d6d', fontSize: '0.88rem', padding: '8px 20px', width: 'fit-content' }}
                                 >
                                     Copy Invitation Link
                                 </button>

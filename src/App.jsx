@@ -140,6 +140,7 @@ function App() {
                 roomData={roomData}
                 activeJump={activeJump}
                 renderVisuals={() => tokens}
+                isMobile
               />
             }
             gamePanel={
@@ -165,7 +166,7 @@ function App() {
                 isMobile
               />
             }
-            gameLog={<GameLog logs={logs} height="auto" />}
+            gameLog={<GameLog logs={logs} height="auto" isMobile />}
             gameChat={
               <GameChat
                 messages={chatMessages}

@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:docs.klipy.co)",
+      "WebFetch(domain:docs.klipy.com)"
+    ]
+  }
+}
