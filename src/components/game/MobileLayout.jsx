@@ -12,7 +12,7 @@ const MobileLayout = ({ board, gamePanel, powerInventory, gameLog, gameChat, rol
     const [activeTab, setActiveTab] = useState('players');
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100dvh', overflow: 'hidden' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100dvh', overflow: 'hidden', position: 'fixed', inset: 0 }}>
             {/* Board */}
             <div style={{ flexShrink: 0, display: 'flex', justifyContent: 'center', alignItems: 'center', height: 'min(70vw, 70vh)', overflow: 'hidden' }}>
                 {board}
@@ -53,7 +53,7 @@ const MobileLayout = ({ board, gamePanel, powerInventory, gameLog, gameChat, rol
                 {activeTab !== 'chat' && (
                     <div style={{ flex: 1, overflowY: activeTab === 'players' ? 'hidden' : 'auto', padding: '10px 12px 4px', minHeight: 0 }}>
                         {activeTab === 'players' && (
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', height: 'fit-content' }}>
                                 {gamePanel}
                                 <button
                                     className="btn love-btn"
