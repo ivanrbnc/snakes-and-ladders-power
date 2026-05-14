@@ -51,7 +51,7 @@ const MobileLayout = ({ board, gamePanel, powerInventory, gameLog, gameChat, rol
             <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: 'rgba(255,240,243,0.5)' }}>
                 {/* Scrollable tabs */}
                 {activeTab !== 'chat' && (
-                    <div style={{ flex: 1, overflowY: 'auto', padding: '10px 12px 4px', minHeight: 0 }}>
+                    <div style={{ flex: 1, overflowY: activeTab === 'players' ? 'hidden' : 'auto', padding: '10px 12px 4px', minHeight: 0 }}>
                         {activeTab === 'players' && (
                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                                 {gamePanel}
