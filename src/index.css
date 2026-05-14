@@ -221,8 +221,8 @@ body {
 
 @media (max-width: 1023px) {
   .board {
-    width: min(69vw, 69vh) !important;
-    height: min(69vw, 69vh) !important;
+    width: min(67vw, 67vh) !important;
+    height: min(67vw, 67vh) !important;
   }
   .board-container { padding: 2px; }
   .game-container .title { display: none; }
