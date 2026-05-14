@@ -52,6 +52,23 @@ function App() {
     executePowerCard, copyRoomLink, setDebugRoll, setDebugTeleport, flashCard, powerEvent, isLuckyRoll, activeJump, logs, chatMessages, sendChat
   } = useGameLogic();
 
+  useEffect(() => {
+    if (inRoom && isMobile) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+    };
+  }, [inRoom, isMobile]);
+
   const tokens = (
     <AnimatePresence>
       {roomData?.players.map((p) => (
