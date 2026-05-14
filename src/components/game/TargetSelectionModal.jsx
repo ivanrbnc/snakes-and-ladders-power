@@ -24,10 +24,19 @@ const TargetSelectionModal = ({ targetSelection, players, myPlayerId, onSelect, 
                             <button
                                 key={p.id}
                                 onClick={() => onSelect(targetSelection.card, targetSelection.loveCardIndex, p.id)}
-                                style={{ backgroundColor: p.color }}
+                                style={{
+                                    backgroundColor: p.color,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '8px',
+                                    opacity: p.protected ? 0.75 : 1,
+                                }}
+                                title={p.protected ? `${p.name} is shielded — card will be blocked!` : p.name}
                             >
-                                {p.name}
-                                {/* {p.protected ? '🛡️' : ''} */}
+                                <span>{p.name}</span>
+                                {p.protected && <span title="Shielded — card will be blocked">🛡️</span>}
+                                {p.skippingTurn && <span title="Already frozen">❄️</span>}
                             </button>
                         ))
                     }

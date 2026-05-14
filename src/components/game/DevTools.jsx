@@ -2,8 +2,17 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Settings } from 'lucide-react';
 
-const DevTools = ({ setDebugRoll }) => {
+const DevTools = ({ setDebugRoll, setDebugTeleport }) => {
     const [isOpen, setIsOpen] = useState(false);
+    const [teleportValue, setTeleportValue] = useState('');
+
+    const handleTeleport = () => {
+        const val = parseInt(teleportValue);
+        if (val >= 1 && val <= 99) {
+            setDebugTeleport(val);
+            setTeleportValue('');
+        }
+    };
 
     return (
         <div className="dev-tools-container">
@@ -27,6 +36,25 @@ const DevTools = ({ setDebugRoll }) => {
                                 </button>
                             ))}
                         </div>
+
+                        <p className="dev-title" style={{ marginTop: '14px' }}>Teleport to Tile</p>
+                        <div style={{ display: 'flex', gap: '6px' }}>
+                            <input
+                                type="number"
+                                min="1"
+                                max="99"
+                                value={teleportValue}
+                                onChange={e => {
+                                    const v = e.target.value.replace(/\D/g, '');
+                                    if (v === '') { setTeleportValue(''); return; }
+                                    setTeleportValue(String(Math.min(99, Math.max(1, parseInt(v)))));
+                                }}
+                                onKeyDown={e => e.key === 'Enter' && handleTeleport()}
+                                placeholder="1–99"
+                                className="dev-teleport-input"
+                            />
+                            <button onClick={handleTeleport} className="dev-btn dev-btn-go">Go</button>
+                        </div>
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -49,6 +77,9 @@ const DevTools = ({ setDebugRoll }) => {
                     flex-direction: column;
                     align-items: flex-start;
                     gap: 10px;
+                }
+                @media (max-width: 1023px) {
+                    .dev-tools-container { display: none; }
                 }
                 .dev-panel {
                     padding: 15px;
@@ -82,6 +113,24 @@ const DevTools = ({ setDebugRoll }) => {
                 .dev-btn:hover {
                     background: #ff4d6d;
                     color: white;
+                    border-color: #ff4d6d;
+                }
+                .dev-btn-go {
+                    padding: 8px 12px;
+                    flex-shrink: 0;
+                }
+                .dev-teleport-input {
+                    flex: 1;
+                    width: 0;
+                    padding: 8px;
+                    border-radius: 8px;
+                    border: 1px solid #eee;
+                    font-size: 0.85rem;
+                    font-weight: 700;
+                    outline: none;
+                    text-align: center;
+                }
+                .dev-teleport-input:focus {
                     border-color: #ff4d6d;
                 }
                 .dev-toggle {

@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { User, Heart, Lock, Camera } from 'lucide-react';
 import CameraCapture from './CameraCapture';
+
+const LOBBY_COLORS = ['#ff4d6d', '#4d96ff', '#52b788', '#ffb703', '#9b5de5', '#f15bb5'];
 
 const Lobby = ({
     roomStatus,
@@ -9,6 +11,9 @@ const Lobby = ({
     setPlayerName,
     playerAvatar,
     setPlayerAvatar,
+    playerColor,
+    setPlayerColor,
+    takenColors,
     maxPlayersInput,
     setMaxPlayersInput,
     passwordInput,
@@ -22,6 +27,13 @@ const Lobby = ({
     showPasswordPrompt
 }) => {
     const [showCamera, setShowCamera] = useState(false);
+
+    useEffect(() => {
+        if (takenColors.includes(playerColor)) {
+            const first = LOBBY_COLORS.find(c => !takenColors.includes(c));
+            if (first) setPlayerColor(first);
+        }
+    }, [takenColors]);
 
     return (
         <div className="setup-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', gap: '10px', padding: '20px', overflow: 'hidden' }}>
@@ -149,6 +161,36 @@ const Lobby = ({
                                             >
                                                 {emoji}
                                             </button>
+                                        );
+                                    })}
+                                </div>
+                            </motion.div>
+
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.25 }}
+                                style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}
+                            >
+                                <label style={{ fontSize: '0.75rem', fontWeight: 'bold', opacity: 0.7, marginLeft: '5px' }}>Player Color</label>
+                                <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                                    {LOBBY_COLORS.map(c => {
+                                        const isTaken = takenColors.includes(c) && c !== playerColor;
+                                        return (
+                                            <button
+                                                key={c}
+                                                type="button"
+                                                onClick={() => !isTaken && setPlayerColor(c)}
+                                                title={isTaken ? 'Already taken' : c}
+                                                style={{
+                                                    width: '28px', height: '28px', borderRadius: '50%',
+                                                    background: c, border: playerColor === c ? '3px solid #333' : '3px solid transparent',
+                                                    cursor: isTaken ? 'not-allowed' : 'pointer',
+                                                    opacity: isTaken ? 0.3 : 1,
+                                                    transition: 'all 0.15s',
+                                                    flexShrink: 0,
+                                                }}
+                                            />
                                         );
                                     })}
                                 </div>

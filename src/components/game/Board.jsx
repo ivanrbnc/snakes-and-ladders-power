@@ -2,7 +2,7 @@ import React from 'react';
 import { Heart, Zap } from 'lucide-react';
 import { FULL_BOARD_EXTRAS } from '../../configuration/gameConstants';
 
-const Board = ({ roomData, renderVisuals }) => {
+const Board = ({ roomData, renderVisuals, activeJump }) => {
     const getSquareCoords = (pos, isJump = false, seed = 0) => {
         const row = Math.floor((pos - 1) / 10);
         const col = (pos - 1) % 10;
@@ -89,7 +89,7 @@ const Board = ({ roomData, renderVisuals }) => {
         return x - Math.floor(x);
     };
 
-    const renderLadder = (s, e, startCoords, endCoords, idx) => {
+    const renderLadder = (s, e, startCoords, endCoords, idx, isActive) => {
         const dx = endCoords.x - startCoords.x;
         const dy = endCoords.y - startCoords.y;
         const length = Math.sqrt(dx * dx + dy * dy);
@@ -170,11 +170,22 @@ const Board = ({ roomData, renderVisuals }) => {
                         );
                     })}
                 </g>
+            {isActive && (
+                <line
+                    x1={startCoords.x} y1={startCoords.y}
+                    x2={endCoords.x} y2={endCoords.y}
+                    stroke="#ffd700"
+                    strokeWidth="18"
+                    strokeLinecap="round"
+                    opacity="0.5"
+                    style={{ filter: 'blur(4px)' }}
+                />
+            )}
             </g>
         );
     };
 
-    const renderSnake = (s, e, startCoords, endCoords, idx) => {
+    const renderSnake = (s, e, startCoords, endCoords, idx, isActive) => {
         const seed = s * 7 + idx;
 
         // Palette of snake color schemes
@@ -322,6 +333,17 @@ const Board = ({ roomData, renderVisuals }) => {
                 <circle cx={startCoords.x} cy={startCoords.y} r="4" fill={pal.bodyDark} />
                 <circle cx={startCoords.x} cy={startCoords.y} r="2" fill={pal.belly} opacity="0.6" />
 
+                {isActive && (
+                    <path
+                        d={pathD}
+                        fill="none"
+                        stroke="#ff4d6d"
+                        strokeWidth="18"
+                        strokeLinecap="round"
+                        opacity="0.45"
+                        style={{ filter: 'blur(5px)' }}
+                    />
+                )}
             </g>
         );
     };
@@ -340,10 +362,11 @@ const Board = ({ roomData, renderVisuals }) => {
                     const endCoords = getSquareCoords(e, true, s);
                     const isLadder = e > s;
 
+                    const isActive = activeJump === s;
                     if (isLadder) {
-                        return renderLadder(s, e, startCoords, endCoords, ladderIdx++);
+                        return renderLadder(s, e, startCoords, endCoords, ladderIdx++, isActive);
                     } else {
-                        return renderSnake(s, e, startCoords, endCoords, snakeIdx++);
+                        return renderSnake(s, e, startCoords, endCoords, snakeIdx++, isActive);
                     }
                 })}
             </svg>

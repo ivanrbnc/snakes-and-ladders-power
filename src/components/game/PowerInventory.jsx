@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Zap, Shield, RefreshCw, Snowflake, FastForward, Trash2 } from 'lucide-react';
 import { POWER_CARDS } from '../../configuration/gameConstants';
 
-const PowerInventory = ({ players, myPlayerId, onUseCard, isMyTurn, disabled }) => {
+const PowerInventory = ({ players, myPlayerId, onUseCard, isMyTurn, disabled, isMobile = false }) => {
     const me = players.find(p => p.id === myPlayerId);
     if (!me) return null;
 
@@ -23,9 +23,8 @@ const PowerInventory = ({ players, myPlayerId, onUseCard, isMyTurn, disabled }) 
     };
 
     return (
-        <div className="power-inventory glass-panel">
+        <div className={isMobile ? 'power-inventory mobile' : 'power-inventory glass-panel'}>
             <h3 className="inventory-title">
-                <Zap size={18} fill="#ffb703" color="#ffb703" style={{ marginRight: '8px', flexShrink: 0 }} />
                 Power Cards ({cards.length}/3)
             </h3>
 
@@ -74,16 +73,22 @@ const PowerInventory = ({ players, myPlayerId, onUseCard, isMyTurn, disabled }) 
                     width: 100%;
                     padding: 20px;
                 }
+                .power-inventory.mobile {
+                    padding: 0;
+                }
                 .inventory-title {
                     display: flex;
                     align-items: center;
                     margin-bottom: 20px;
-                    font-size: 1.1rem;
+                    font-size: 1.2rem;
                     font-weight: bold;
                     color: inherit;
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
+                }
+                .mobile .inventory-title {
+                    margin-bottom: 15px;
                 }
                 .cards-list {
                     display: flex;
