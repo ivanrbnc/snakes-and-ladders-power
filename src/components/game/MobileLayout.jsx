@@ -13,8 +13,8 @@ const MobileLayout = ({ board, gamePanel, powerInventory, gameLog, gameChat, rol
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', height: '100dvh', overflow: 'hidden' }}>
-            {/* Board — grows to fill space not taken by tabs + roll button */}
-            <div style={{ flex: 1, minHeight: 0, display: 'flex', justifyContent: 'center', alignItems: 'center', overflow: 'hidden' }}>
+            {/* Board */}
+            <div style={{ flexShrink: 0, display: 'flex', justifyContent: 'center', alignItems: 'center', height: 'min(70vw, 70vh)', overflow: 'hidden' }}>
                 {board}
             </div>
 
@@ -31,7 +31,7 @@ const MobileLayout = ({ board, gamePanel, powerInventory, gameLog, gameChat, rol
                         key={id}
                         onClick={() => setActiveTab(id)}
                         style={{
-                            flex: 1, padding: '8px 0', border: 'none', background: 'none',
+                            flex: 1, padding: '6px 0', border: 'none', background: 'none',
                             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px',
                             cursor: 'pointer', fontFamily: "'Outfit', sans-serif",
                             color: activeTab === id ? '#ff4d6d' : '#aaa',
@@ -41,14 +41,14 @@ const MobileLayout = ({ board, gamePanel, powerInventory, gameLog, gameChat, rol
                             transition: 'all 0.15s',
                         }}
                     >
-                        <Icon size={18} />
+                        <Icon size={14} />
                         {label}
                     </button>
                 ))}
             </div>
 
-            {/* Panel content — fixed height so board above gets all remaining space */}
-            <div style={{ height: '28dvh', flexShrink: 0, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden', background: 'rgba(255,240,243,0.5)' }}>
+            {/* Panel content */}
+            <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: 'rgba(255,240,243,0.5)' }}>
                 {/* Scrollable tabs */}
                 {activeTab !== 'chat' && (
                     <div style={{ flex: 1, overflowY: 'auto', padding: '10px 12px 4px', minHeight: 0 }}>
