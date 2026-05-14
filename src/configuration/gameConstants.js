@@ -43,6 +43,14 @@ export const LDR_CARDS_USED = [
 ];
 
 export const LDR_CARDS = [
+    "What made you smile today? Show me that smile right now.",
+    "What was the best part of your day?",
+    "What's a song that reminds you of us? Play a few seconds for me.",
+    "Give me your cutest look right now.",
+    "How do you see our relationship growing?",
+    "If we can't say anything to each other now, what will happen later, when we meet?",
+    "Describe the hug or cuddle you're craving from me most!",
+
     "Show me the view from your window right now. No filter.",
     "Do your best impression of me. Go.",
     "Find something near you that represents how you feel about us.",
@@ -53,8 +61,6 @@ export const LDR_CARDS = [
     "Walk to your window and tell me what the sky looks like where you are.",
     "Recreate the face you make when you see my name pop up on your phone.",
     "Find something in your room that you'd want to give me. Tell me why.",
-    "Show me how you sleep. What side, what position?",
-    "What's the last thing you looked at before you fell asleep last night?",
     "Play 10 seconds of whatever's been stuck in your head today.",
     "Take a picture right now and send it without context.",
     "Show me your hands. What do they smell like right now?",

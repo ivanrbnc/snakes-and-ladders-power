@@ -36,7 +36,7 @@ const Lobby = ({
     }, [takenColors]);
 
     return (
-        <div className="setup-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', gap: '10px', padding: '20px', overflow: 'hidden' }}>
+        <div className="setup-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px', padding: '16px 20px 32px' }}>
             <h1 className="title" style={{ fontSize: 'clamp(2.5rem, 8vh, 3.8rem)', margin: 0 }}>Snakes & Ladders</h1>
 
             <form

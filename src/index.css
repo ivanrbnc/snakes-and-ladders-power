@@ -22,8 +22,7 @@ body {
   font-family: 'Outfit', sans-serif;
   background: radial-gradient(circle at top left, #fff0f3, #ffe3e0);
   color: var(--text);
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
 }
 
 .glass-panel {
@@ -216,13 +215,12 @@ body {
 }
 
 @media (max-width: 1023px) {
-  body { overflow: hidden; }
   .board {
     width: min(70vw, 70vh) !important;
     height: min(70vw, 70vh) !important;
   }
   .board-container { padding: 4px; }
-  .title { display: none; }
+  .game-container .title { display: none; }
 }
 
 .right-panel-container {

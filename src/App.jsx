@@ -165,7 +165,7 @@ function App() {
                 isMobile
               />
             }
-            gameLog={<GameLog logs={logs} isMobile />}
+            gameLog={<GameLog logs={logs} height="auto" />}
             gameChat={
               <GameChat
                 messages={chatMessages}

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-const GameLog = ({ logs, height, isMobile = false }) => {
+const GameLog = ({ logs, height }) => {
     const bottomRef = useRef(null);
 
     useEffect(() => {
@@ -8,9 +8,9 @@ const GameLog = ({ logs, height, isMobile = false }) => {
     }, [logs]);
 
     return (
-        <div className={isMobile ? '' : 'glass-panel right-panel-section'} style={{ padding: isMobile ? '0' : '14px 16px', display: 'flex', flexDirection: 'column', height: isMobile ? 'auto' : (height || '100%'), minHeight: isMobile ? 0 : '200px', flexShrink: height ? 0 : undefined }}>
+        <div className="glass-panel right-panel-section" style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', height: height === 'auto' ? undefined : (height || '100%'), minHeight: height === 'auto' ? undefined : '200px', flexShrink: height && height !== 'auto' ? 0 : undefined }}>
             <h3 style={{ marginBottom: '8px', fontSize: '1.2rem', flexShrink: 0 }}>Game Log</h3>
-            <div style={{ overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '4px', minHeight: 0 }}>
+            <div style={{ overflowY: height === 'auto' ? 'visible' : 'auto', flex: height === 'auto' ? undefined : 1, display: 'flex', flexDirection: 'column', gap: '4px', minHeight: 0, paddingRight: '4px', marginRight: '-4px' }}>
                 {logs.length === 0 && (
                     <span style={{ fontSize: '0.9rem', color: '#ff4d6d', opacity: 0.7, fontStyle: 'italic', textAlign: 'center', padding: '10px 0', display: 'block' }}>No events yet...</span>
                 )}

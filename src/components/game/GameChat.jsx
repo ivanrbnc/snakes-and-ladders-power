@@ -21,7 +21,7 @@ const GameChat = ({ messages, onSend, myPlayerId, players, isMobile }) => {
         <div className={isMobile ? '' : 'glass-panel right-panel-section'} style={{ padding: isMobile ? '0' : '14px 16px', display: 'flex', flexDirection: 'column', gap: '8px', flex: 1, height: '100%', minHeight: 0, boxSizing: 'border-box' }}>
             <h3 style={{ marginBottom: '0', fontSize: '1.2rem', flexShrink: 0 }}>Chat</h3>
 
-            <div style={{ overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '6px', minHeight: 0, overflow: 'hidden auto' }}>
+            <div style={{ overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '6px', minHeight: 0, overflow: 'hidden auto', paddingRight: '4px', marginRight: '-4px' }}>
                 {messages.length === 0 && (
                     <span style={{ fontSize: '0.9rem', color: '#ff4d6d', opacity: 0.7, fontStyle: 'italic', textAlign: 'center', padding: '10px 0', display: 'block' }}>Say something! 💬</span>
                 )}

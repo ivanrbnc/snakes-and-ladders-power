@@ -10,6 +10,15 @@ import {
     generatePowerSquares
 } from '../configuration/gameConstants';
 
+const shuffleDeck = () => {
+    const indices = LDR_CARDS.map((_, i) => i);
+    for (let i = indices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+    return indices;
+};
+
 export const useGameLogic = () => {
     const [roomId, setRoomId] = useState('');
     const [playerName, setPlayerName] = useState('');
@@ -253,7 +262,10 @@ export const useGameLogic = () => {
                 else if (cardId === 'shield') overlayType = 'shield_activate';
 
                 if (overlayType) {
-                    const event = { id: crypto.randomUUID(), type: overlayType, message: msg || '', targetId, actorId, isTarget, isActor };
+                    const players = roomDataRef.current?.players || [];
+                    const actorName = players.find(p => p.id === actorId)?.name || '';
+                    const targetName = players.find(p => p.id === targetId)?.name || '';
+                    const event = { id: crypto.randomUUID(), type: overlayType, message: msg || '', targetId, actorId, isTarget, isActor, actorName, targetName };
                     setPowerEvent(event);
                     setTimeout(() => setPowerEvent(null), 3000);
                 }
@@ -263,15 +275,16 @@ export const useGameLogic = () => {
                     const actorColor = roomDataRef.current?.players.find(p => p.id === actorId)?.color;
                     addLog(msg, actorColor);
 
+                    const actorName = roomDataRef.current?.players.find(p => p.id === actorId)?.name || 'Someone';
                     let toastMsg = msg;
                     if (isActor && !isBlocked) {
                         if (cardId === 'freeze') toastMsg = msg.replace(/^.+ froze /, "You froze ");
                         else if (cardId === 'prank') toastMsg = msg.replace(/^.+ pranked /, "You pranked ");
                         else if (cardId === 'swap') toastMsg = msg.replace(/^.+ swapped with /, "You swapped with ");
                     } else if (isTarget && !isBlocked) {
-                        if (cardId === 'freeze') toastMsg = "You've been frozen! ❄️";
-                        else if (cardId === 'prank') toastMsg = "You've been pranked! 🍌";
-                        else if (cardId === 'swap') toastMsg = "You've been swapped! 🔄";
+                        if (cardId === 'freeze') toastMsg = `You've been frozen by ${actorName}! ❄️`;
+                        else if (cardId === 'prank') toastMsg = `You've been pranked by ${actorName}! 🍌`;
+                        else if (cardId === 'swap') toastMsg = `You've been swapped by ${actorName}! 🔄`;
                     }
                     addToast(toastMsg);
                 }
@@ -318,7 +331,7 @@ export const useGameLogic = () => {
         if (!roomRow || !roomRow.data || !roomRow.data.players || roomRow.data.players.length === 0) {
             room = {
                 players: [{ id: myPlayerId.current, name: playerName, avatar: playerAvatar, position: 1, color: playerColor, powerCards: [], protected: false, skippingTurn: false, nextRollGuaranteed: null }],
-                turn: 0, gameStarted: false, loveCardIndex: 0, maxPlayers: parseInt(maxPlayersInput) || 2, password: passwordInput || null, roomId,
+                turn: 0, gameStarted: false, loveCardQueue: shuffleDeck(), maxPlayers: parseInt(maxPlayersInput) || 2, password: passwordInput || null, roomId,
                 loveSquares: generateLoveSquares(), powerSquares: []
             };
             room.powerSquares = generatePowerSquares(room.loveSquares);
@@ -370,8 +383,10 @@ export const useGameLogic = () => {
             const currentRoomForRoll = roomDataRef.current;
             let loveCard = null;
             if ((currentRoomForRoll.loveSquares || []).includes(finalPosition)) {
-                loveCard = currentRoomForRoll.loveCardIndex;
-                currentRoomForRoll.loveCardIndex = (currentRoomForRoll.loveCardIndex + 1) % LDR_CARDS.length;
+                let queue = currentRoomForRoll.loveCardQueue?.length ? [...currentRoomForRoll.loveCardQueue] : shuffleDeck();
+                loveCard = queue.shift();
+                if (queue.length === 0) queue = shuffleDeck();
+                currentRoomForRoll.loveCardQueue = queue;
             }
             const foundPower = (currentRoomForRoll.powerSquares || []).includes(finalPosition) ? POWER_CARDS[Math.floor(Math.random() * POWER_CARDS.length)] : null;
             const nextTurn = (currentRoomForRoll.turn + 1) % currentRoomForRoll.players.length;
@@ -500,7 +515,6 @@ export const useGameLogic = () => {
             await supabase.from('rooms').update({ data: updatedRoom }).eq('id', roomId);
             channelRef.current.send({ type: 'broadcast', event: 'power_card_action', payload: { movement, msg: actorMsg, cardId: card.id, targetId, actorId: myPlayerId.current } });
             if (movement) await fastWalk(movement.playerId, movement.start, movement.end);
-            if (actorMsg) addToast(actorMsg);
         } catch (err) { console.error(err); }
     };
 

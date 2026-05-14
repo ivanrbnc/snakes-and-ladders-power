@@ -2,34 +2,37 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const CONFIGS = {
-    freeze: {
-        emoji: '❄️', color: '#4d96ff', border: '#4d96ff',
-        title: "You've been Frozen!",
-    },
-    prank: {
-        emoji: '🍌', color: '#ff4d6d', border: '#ff4d6d',
-        title: "You've been Pranked!",
-    },
-    swap: {
-        emoji: '🔄', color: '#9b5de5', border: '#9b5de5',
-        title: 'Positions Swapped!',
-    },
-    shield_blocked: {
-        emoji: '🛡️', color: '#64b4ff', border: '#64b4ff',
-        title: 'Shield Blocked It!',
-    },
-    shield_activate: {
-        emoji: '🛡️', color: '#64b4ff', border: '#64b4ff',
-        title: 'Shield Activated!',
-    },
-    lucky: {
-        emoji: '🎲', color: '#ffd700', border: '#ffd700',
-        title: 'Lucky Charm!',
-    },
-    turbo: {
-        emoji: '⚡', color: '#ffb703', border: '#ffb703',
-        title: 'Turbo Boost!',
-    },
+    freeze:         { emoji: '❄️', color: '#4d96ff', border: '#4d96ff' },
+    prank:          { emoji: '🍌', color: '#ff4d6d', border: '#ff4d6d' },
+    swap:           { emoji: '🔄', color: '#9b5de5', border: '#9b5de5' },
+    shield_blocked: { emoji: '🛡️', color: '#64b4ff', border: '#64b4ff' },
+    shield_activate:{ emoji: '🛡️', color: '#64b4ff', border: '#64b4ff' },
+    lucky:          { emoji: '🎲', color: '#ffd700', border: '#ffd700' },
+    turbo:          { emoji: '⚡', color: '#ffb703', border: '#ffb703' },
+};
+
+const getTitle = (event) => {
+    const { type, isActor, isTarget, actorName, targetName } = event;
+    if (type === 'freeze') {
+        if (isActor) return `You froze ${targetName}! ❄️`;
+        if (isTarget) return `You've been frozen by ${actorName}! ❄️`;
+        return `${actorName} froze ${targetName}!`;
+    }
+    if (type === 'prank') {
+        if (isActor) return `You pranked ${targetName}! 🍌`;
+        if (isTarget) return `You've been pranked by ${actorName}! 🍌`;
+        return `${actorName} pranked ${targetName}!`;
+    }
+    if (type === 'swap') {
+        if (isActor) return `You swapped with ${targetName}! 🔄`;
+        if (isTarget) return `You've been swapped by ${actorName}! 🔄`;
+        return `${actorName} swapped with ${targetName}!`;
+    }
+    if (type === 'shield_blocked') return 'Shield Blocked It! 🛡️';
+    if (type === 'shield_activate') return 'Shield Activated! 🛡️';
+    if (type === 'lucky') return isActor ? 'Your Lucky Charm! 🎲' : `${actorName}'s Lucky Charm! 🎲`;
+    if (type === 'turbo') return isActor ? 'Turbo Boost! ⚡' : `${actorName} used Turbo! ⚡`;
+    return '';
 };
 
 /* Freeze: icy blue vignette + snowflakes drift down */
@@ -279,7 +282,7 @@ const PowerCardOverlay = ({ event }) => {
                         </motion.span>
 
                         <div style={{ fontSize: '1.5rem', fontWeight: 800, color: config.color }}>
-                            {config.title}
+                            {getTitle(event)}
                         </div>
                         <div style={{ fontSize: '1rem', color: '#555', fontWeight: 500 }}>
                             {event.message}
