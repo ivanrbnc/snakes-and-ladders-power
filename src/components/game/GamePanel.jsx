@@ -55,11 +55,12 @@ const GamePanel = ({ roomData, myPlayerId, rollDice, isRolling, copyRoomLink, hi
                         className="btn love-btn"
                         onClick={copyRoomLink}
                         style={{
-                            marginTop: '20px',
+                            marginTop: isMobile ? '6px' : '20px',
                             background: 'rgba(255, 77, 109, 0.1)',
                             color: '#ff4d6d',
-                            fontSize: '0.9rem',
-                            padding: '10px'
+                            fontSize: isMobile ? '0.78rem' : '0.9rem',
+                            padding: isMobile ? '6px 14px' : '10px',
+                            width: isMobile ? 'fit-content' : undefined,
                         }}
                     >
                         Copy Invitation Link

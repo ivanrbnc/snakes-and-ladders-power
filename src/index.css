@@ -25,6 +25,11 @@ body {
   min-height: 100vh;
 }
 
+.game-container {
+  overflow: hidden;
+  height: 100vh;
+}
+
 .glass-panel {
   background: var(--glass);
   backdrop-filter: blur(10px);

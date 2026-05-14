@@ -48,7 +48,7 @@ const MobileLayout = ({ board, gamePanel, powerInventory, gameLog, gameChat, rol
             </div>
 
             {/* Panel content — flex column, overflow hidden so each tab controls its own scroll */}
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden', background: 'rgba(255,240,243,0.5)' }}>
                 {/* Scrollable tabs */}
                 {activeTab !== 'chat' && (
                     <div style={{ flex: 1, overflowY: 'auto', padding: '10px 12px 4px', minHeight: 0 }}>
@@ -79,8 +79,8 @@ const MobileLayout = ({ board, gamePanel, powerInventory, gameLog, gameChat, rol
             {/* Roll button */}
             <div style={{
                 flexShrink: 0, padding: '6px 16px 12px',
-                background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(10px)',
-                borderTop: '1px solid rgba(255,77,109,0.1)',
+                background: 'rgba(255,240,243,0.85)', backdropFilter: 'blur(10px)',
+                borderTop: '1px solid rgba(255,77,109,0.15)',
             }}>
                 {rollButton}
             </div>
