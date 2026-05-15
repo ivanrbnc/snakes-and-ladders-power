@@ -43,6 +43,8 @@ export const LDR_CARDS_USED = [
 ];
 
 export const LDR_CARDS = [
+    "Set a timer and fetch a pen and a paper. Draw a picture of each other. Go!",
+
     "What made you smile today? Show me that smile right now.",
     "What was the best part of your day?",
     "What's a song that reminds you of us? Play a few seconds for me.",
@@ -145,7 +147,6 @@ export const LDR_CARDS = [
     "If you had to describe me using only three objects in your room, what would you pick?",
     "What fictional couple do we remind you of — honestly?",
     "If someone wrote a book about us, what would the title be?",
-    "What would our couple's Halloween costume be?",
     "If we had a signature dish, what would it be?",
     "Describe our relationship as a weather pattern.",
     "What superpower would make this relationship easier, and which one would make it more fun?"
