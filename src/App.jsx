@@ -49,7 +49,7 @@ function App() {
     rollingValue, hasLanded, pendingPowerCard, setPendingPowerCard,
     targetSelection, setTargetSelection, hasRolledThisTurn, myPlayerId,
     joinRoom, rollDice, handlePowerCardChoice, onUseCardFromInventory,
-    executePowerCard, copyRoomLink, setDebugRoll, setDebugTeleport, flashCard, powerEvent, isLuckyRoll, activeJump, logs, chatMessages, sendChat
+    executePowerCard, copyRoomLink, setDebugRoll, setDebugTeleport, flashCard, powerEvent, isLuckyRoll, activeJump, logs, chatMessages, sendChat, shuffleCard
   } = useGameLogic();
 
   useEffect(() => {
@@ -113,7 +113,7 @@ function App() {
     <button
       className="btn"
       onClick={rollDice}
-      disabled={roomData?.players.length < (roomData?.maxPlayers || 2) || roomData?.players[roomData.turn]?.id !== myPlayerId.current || isRolling}
+      disabled={roomData?.players.length < (roomData?.maxPlayers || 2) || roomData?.players[roomData.turn]?.id !== myPlayerId.current || isRolling || hasRolledThisTurn}
       style={{ width: '100%', padding: '14px', fontSize: '1rem' }}
     >
       <Dice5 size={20} style={{ marginRight: '8px' }} />
@@ -123,8 +123,10 @@ function App() {
     </button>
   );
 
+  const friendship = !!roomData?.isFriendship;
+
   return (
-    <>
+    <div className={friendship ? 'friendship-theme' : ''} style={{ minHeight: '100dvh' }}>
       <ToastContainer toasts={toasts} />
 
       {!inRoom ? (
@@ -183,6 +185,7 @@ function App() {
                 isMobile
               />
             }
+            chatMessages={chatMessages}
             gameLog={<GameLog logs={logs} height="auto" isMobile />}
             gameChat={
               <GameChat
@@ -196,7 +199,7 @@ function App() {
             rollButton={rollBtn}
           />
           <DiceOverlay isRolling={isRolling} hasLanded={hasLanded} rollingValue={rollingValue} rollingPlayer={rollingPlayer} isLucky={isLuckyRoll} />
-          <LoveCard currentCard={currentCard} setCurrentCard={setCurrentCard} />
+          <LoveCard currentCard={currentCard} setCurrentCard={setCurrentCard} onShuffle={shuffleCard} isFriendship={!!roomData?.isFriendship} />
           {modals}
         </>
       ) : (
@@ -228,7 +231,7 @@ function App() {
           />
 
           <DiceOverlay isRolling={isRolling} hasLanded={hasLanded} rollingValue={rollingValue} rollingPlayer={rollingPlayer} isLucky={isLuckyRoll} />
-          <LoveCard currentCard={currentCard} setCurrentCard={setCurrentCard} />
+          <LoveCard currentCard={currentCard} setCurrentCard={setCurrentCard} onShuffle={shuffleCard} isFriendship={!!roomData?.isFriendship} />
           {modals}
 
           <div className="right-panel-container" style={{ display: 'flex', flexDirection: 'column' }}>
@@ -244,7 +247,7 @@ function App() {
           {import.meta.env.VITE_ENVIRONMENT === 'DEV' && <DevTools setDebugRoll={setDebugRoll} setDebugTeleport={setDebugTeleport} />}
         </div>
       )}
-    </>
+    </div>
   );
 }
 

@@ -43,7 +43,7 @@ const GamePanel = ({ roomData, myPlayerId, rollDice, isRolling, copyRoomLink, hi
                 })}
 
                 {roomData?.players.length < (roomData?.maxPlayers || 2)
-                    ? <p style={{ marginTop: isMobile ? '8px' : '15px', fontSize: isMobile ? '0.78rem' : '0.9rem', color: '#ff4d6d', fontStyle: 'italic', fontWeight: 600 }}>Waiting for players... ⏳</p>
+                    ? <p style={{ marginTop: isMobile ? '8px' : '15px', fontSize: isMobile ? '0.78rem' : '0.9rem', color: 'var(--primary)', fontStyle: 'italic', fontWeight: 600 }}>Waiting for players... ⏳</p>
                     : <div className="turn-indicator" style={{ marginTop: isMobile ? '8px' : '15px', fontSize: isMobile ? '0.8rem' : undefined }}>
                         {roomData.players[roomData.turn]?.id === myPlayerId
                             ? "It's Your Turn! 🎲"
@@ -57,8 +57,9 @@ const GamePanel = ({ roomData, myPlayerId, rollDice, isRolling, copyRoomLink, hi
                         onClick={copyRoomLink}
                         style={{
                             marginTop: isMobile ? '12px' : '20px',
-                            background: 'rgba(255, 77, 109, 0.1)',
-                            color: '#ff4d6d',
+                            background: 'transparent',
+                            color: 'var(--primary)',
+                            border: '1.5px solid var(--primary)',
                             fontSize: isMobile ? '0.78rem' : '0.9rem',
                             padding: isMobile ? '6px 14px' : '10px',
                             width: isMobile ? 'fit-content' : undefined,

@@ -165,6 +165,36 @@ body {
   cursor: not-allowed;
 }
 
+/* Friendship mode — overrides primary color to blue across all components */
+.friendship-theme {
+  --primary: #4d96ff;
+  --primary-light: #85b8ff;
+  --bg: #f0f4ff;
+  --text: #0d2259;
+}
+
+.friendship-theme {
+  background: radial-gradient(circle at top left, #f0f4ff, #dde8ff);
+}
+
+.friendship-theme .btn {
+  box-shadow: 0 4px 15px rgba(77, 150, 255, 0.4);
+}
+
+.friendship-theme .btn:hover {
+  background: #6aaaff;
+  box-shadow: 0 6px 20px rgba(77, 150, 255, 0.6);
+}
+
+.friendship-theme .board {
+  outline-color: #4d96ff;
+}
+
+.friendship-theme .cell {
+  color: #4d96ff;
+  border-color: #dbe8ff;
+}
+
 .dice-container {
   display: flex;
   flex-direction: column;
@@ -346,7 +376,7 @@ body {
 }
 
 .love-btn:hover {
-  background: #ff4d6d !important;
+  background: var(--primary) !important;
   color: white !important;
   transform: scale(1.05);
 }

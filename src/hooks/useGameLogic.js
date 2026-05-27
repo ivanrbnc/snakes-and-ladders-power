@@ -3,15 +3,21 @@ import confetti from 'canvas-confetti';
 import { supabase, supabaseUrl, supabaseAnonKey } from '../lib/supabase';
 import {
     FULL_BOARD_EXTRAS,
+    FRIENDSHIP_BOARD_EXTRAS,
     LDR_CARDS,
+    FRIENDSHIP_CARDS,
     POWER_CARDS,
     MAX_POWER_CARDS,
     generateLoveSquares,
     generatePowerSquares
 } from '../configuration/gameConstants';
 
-const shuffleDeck = () => {
-    const indices = LDR_CARDS.map((_, i) => i);
+const isFriendshipMode = (room) => (room?.maxPlayers || 2) >= 3;
+const getActiveCards = (room) => isFriendshipMode(room) ? FRIENDSHIP_CARDS : LDR_CARDS;
+const getActiveBoardExtras = (room) => isFriendshipMode(room) ? FRIENDSHIP_BOARD_EXTRAS : FULL_BOARD_EXTRAS;
+
+const shuffleDeck = (cards) => {
+    const indices = cards.map((_, i) => i);
     for (let i = indices.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [indices[i], indices[j]] = [indices[j], indices[i]];
@@ -107,14 +113,18 @@ export const useGameLogic = () => {
                     'Content-Type': 'application/json'
                 };
                 fetch(url, { method: 'POST', headers, body, keepalive: true });
+
+                // Broadcast so other players see the leave in their log
+                const me = roomDataRef.current?.players.find(p => p.id === myPlayerId.current);
+                if (me && channelRef.current) {
+                    channelRef.current.send({ type: 'broadcast', event: 'player_left', payload: { name: me.name, color: me.color } });
+                }
             }
         };
 
         window.addEventListener('beforeunload', handleUnload);
-        window.addEventListener('unload', handleUnload);
         return () => {
             window.removeEventListener('beforeunload', handleUnload);
-            window.removeEventListener('unload', handleUnload);
         };
     }, [roomId]);
 
@@ -146,6 +156,14 @@ export const useGameLogic = () => {
         });
 
         channel
+            .on('broadcast', { event: 'card_shuffled' }, ({ payload }) => {
+                const cards = isFriendshipMode(roomDataRef.current) ? FRIENDSHIP_CARDS : LDR_CARDS;
+                setCurrentCard(cards[payload.cardIndex]);
+                setLogs(prev => [...prev.slice(-99), { id: Math.random().toString(36).substring(2, 11), msg: `${payload.name} shuffled the card 🔀`, color: payload.color }]);
+            })
+            .on('broadcast', { event: 'player_left' }, ({ payload }) => {
+                setLogs(prev => [...prev.slice(-99), { id: Math.random().toString(36).substring(2, 11), msg: `${payload.name} left the room 👋`, color: payload.color }]);
+            })
             .on('broadcast', { event: 'dice_rolling' }, ({ payload }) => {
                 const { name, isLucky } = payload;
                 if (window.diceInterval) clearInterval(window.diceInterval);
@@ -166,9 +184,8 @@ export const useGameLogic = () => {
                 }, 80);
             })
             .on('broadcast', { event: 'dice_rolled' }, async ({ payload }) => {
-                const { diceValue, playerId, name, startPosition, newPosition, isSpecial, specialType, shieldBlockedSnake, nextTurn, loveCardIndex, foundPowerCard } = payload;
+                const { diceValue, playerId, name, startPosition, newPosition, isSpecial, specialType, shieldBlockedSnake, nextTurn, loveCardIndex, foundPowerCard, logId, winLogId } = payload;
                 if (window.diceInterval) clearInterval(window.diceInterval);
-                await new Promise(r => requestAnimationFrame(r));
                 setRollingValue(diceValue);
                 setRollingPlayer(name);
                 setHasLanded(true);
@@ -212,13 +229,23 @@ export const useGameLogic = () => {
                     else if (specialType === 'snake') rollMsg += ` Slid to ${newPosition} via snake!`;
                 }
                 addToast(rollMsg);
-                addLog(rollMsg, roomDataRef.current?.players.find(p => p.id === playerId)?.color);
+                const playerColor = roomDataRef.current?.players.find(p => p.id === playerId)?.color;
+                setLogs(prev => {
+                    const id = logId || Math.random().toString(36).substring(2, 11);
+                    if (prev.some(l => l.id === id)) return prev;
+                    const entries = [{ id, msg: rollMsg, color: playerColor }];
+                    if (winLogId) entries.push({ id: winLogId, msg: `🏆 ${name} wins!`, color: '#ffd700' });
+                    return [...prev.slice(-99), ...entries];
+                });
                 setRoomData(prev => {
                     if (!prev) return prev;
                     const newPlayers = prev.players.map(p => p.id === playerId ? { ...p, position: newPosition } : p);
                     return { ...prev, players: newPlayers, turn: nextTurn };
                 });
-                if (loveCardIndex !== null && loveCardIndex !== undefined) setTimeout(() => setCurrentCard(LDR_CARDS[loveCardIndex]), 500);
+                if (loveCardIndex !== null && loveCardIndex !== undefined) {
+                    const cards = getActiveCards(roomDataRef.current);
+                    setTimeout(() => setCurrentCard(cards[loveCardIndex]), 500);
+                }
                 if (playerId === myPlayerId.current && foundPowerCard) {
                     const card = POWER_CARDS.find(c => c.id === foundPowerCard);
                     if (card) setPendingPowerCard(card);
@@ -226,7 +253,6 @@ export const useGameLogic = () => {
             })
             .on('broadcast', { event: 'game_over' }, ({ payload }) => {
                 setWinner(payload.winner);
-                addLog(`🏆 ${payload.winner} wins!`, '#ffd700');
                 confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#ff4d6d', '#ffb3c1', '#ffffff'] });
             })
             .on('broadcast', { event: 'teleport' }, ({ payload }) => {
@@ -299,6 +325,13 @@ export const useGameLogic = () => {
                 const oldTurn = roomDataRef.current?.turn;
                 if (oldTurn !== undefined && oldTurn !== newData.turn) setHasRolledThisTurn(false);
                 setRoomData(newData);
+                if (newData.logs?.length) {
+                    setLogs(prev => {
+                        const existingIds = new Set(prev.map(l => l.id));
+                        const newEntries = newData.logs.filter(l => !existingIds.has(l.id));
+                        return newEntries.length ? [...prev, ...newEntries].slice(-100) : prev;
+                    });
+                }
                 setVisualPositions(prev => {
                     const next = { ...prev };
                     if (isRollingRef.current || hasLandedRef.current || animatingPlayerRef.current) return prev;
@@ -328,12 +361,17 @@ export const useGameLogic = () => {
         const { data: roomRow } = await supabase.from('rooms').select('*').eq('id', roomId).maybeSingle();
         let room;
         if (!roomRow || !roomRow.data || !roomRow.data.players || roomRow.data.players.length === 0) {
+            const maxPlayers = parseInt(maxPlayersInput) || 2;
+            const friendship = maxPlayers >= 3;
             room = {
                 players: [{ id: myPlayerId.current, name: playerName, avatar: playerAvatar, position: 1, color: playerColor, powerCards: [], protected: false, skippingTurn: false, nextRollGuaranteed: null }],
-                turn: 0, gameStarted: false, loveCardQueue: shuffleDeck(), maxPlayers: parseInt(maxPlayersInput) || 2, password: passwordInput || null, roomId,
-                loveSquares: generateLoveSquares(), powerSquares: []
+                turn: 0, gameStarted: false, maxPlayers, password: passwordInput || null, roomId,
+                isFriendship: friendship,
+                loveCardQueue: shuffleDeck(friendship ? FRIENDSHIP_CARDS : LDR_CARDS),
+                loveSquares: generateLoveSquares(friendship ? FRIENDSHIP_BOARD_EXTRAS : FULL_BOARD_EXTRAS), powerSquares: []
             };
-            room.powerSquares = generatePowerSquares(room.loveSquares);
+            room.powerSquares = generatePowerSquares(room.loveSquares, friendship ? FRIENDSHIP_BOARD_EXTRAS : FULL_BOARD_EXTRAS);
+            room = appendLogToRoom(room, { id: Math.random().toString(36).substring(2, 11), msg: `${playerName} created the room 🎉`, color: playerColor });
             await supabase.from('rooms').upsert([{ id: roomId, data: room }]);
         } else {
             room = roomRow.data;
@@ -343,6 +381,7 @@ export const useGameLogic = () => {
                     const takenColors = room.players.map(p => p.color);
                     if (takenColors.includes(playerColor)) return addToast("That color is already taken! Pick another.");
                     room.players.push({ id: myPlayerId.current, name: playerName, avatar: playerAvatar, position: 1, color: playerColor, powerCards: [], protected: false, skippingTurn: false, nextRollGuaranteed: null });
+                    room = appendLogToRoom(room, { id: Math.random().toString(36).substring(2, 11), msg: `${playerName} joined the room 👋`, color: playerColor });
                     await supabase.from('rooms').update({ data: room }).eq('id', roomId);
                 } else return addToast("Room is full!");
             }
@@ -369,12 +408,14 @@ export const useGameLogic = () => {
         }
         const diceValue = Number(player.nextRollGuaranteed) || (Math.floor(Math.random() * 6) + 1);
         setHasRolledThisTurn(true);
+        isRollingRef.current = true; // block re-taps before broadcast echo arrives
         channelRef.current.send({ type: 'broadcast', event: 'dice_rolling', payload: { name: player.name, diceValue, isLucky: !!player.nextRollGuaranteed } });
         setTimeout(async () => {
             const startPosition = player.position;
             let newPos = player.position + diceValue;
             if (newPos > 100) newPos = 100;
-            const rawExtra = FULL_BOARD_EXTRAS[newPos];
+            const boardExtras = getActiveBoardExtras(roomDataRef.current);
+            const rawExtra = boardExtras[newPos];
             const isSnake = rawExtra !== undefined && rawExtra < newPos;
             const shieldBlocksSnake = isSnake && player.protected;
             const finalPosition = shieldBlocksSnake ? newPos : (rawExtra || newPos);
@@ -382,9 +423,10 @@ export const useGameLogic = () => {
             const currentRoomForRoll = roomDataRef.current;
             let loveCard = null;
             if ((currentRoomForRoll.loveSquares || []).includes(finalPosition)) {
-                let queue = currentRoomForRoll.loveCardQueue?.length ? [...currentRoomForRoll.loveCardQueue] : shuffleDeck();
+                const activeCards = getActiveCards(currentRoomForRoll);
+                let queue = currentRoomForRoll.loveCardQueue?.length ? [...currentRoomForRoll.loveCardQueue] : shuffleDeck(activeCards);
                 loveCard = queue.shift();
-                if (queue.length === 0) queue = shuffleDeck();
+                if (queue.length === 0) queue = shuffleDeck(activeCards);
                 currentRoomForRoll.loveCardQueue = queue;
             }
             const foundPower = (currentRoomForRoll.powerSquares || []).includes(finalPosition) ? POWER_CARDS[Math.floor(Math.random() * POWER_CARDS.length)] : null;
@@ -392,18 +434,20 @@ export const useGameLogic = () => {
             const updatedPlayers = currentRoomForRoll.players.map(p => p.id === myPlayerId.current ? { ...p, position: finalPosition, nextRollGuaranteed: null, protected: shieldBlocksSnake ? false : p.protected } : p);
             let rollMsg = `${player.name} rolled ${diceValue}!`;
             if (shieldBlocksSnake) rollMsg += ` Shield blocked the snake! 🛡️`;
-            else if (FULL_BOARD_EXTRAS[finalPosition] === undefined && finalPosition !== (player.position + diceValue)) {
+            else if (boardExtras[finalPosition] === undefined && finalPosition !== (player.position + diceValue)) {
                 if (finalPosition > player.position + diceValue) rollMsg += ` Climbed to ${finalPosition} via ladder!`;
                 else rollMsg += ` Slid to ${finalPosition} via snake!`;
             }
             const logEntry = { id: Math.random().toString(36).substring(2, 11), msg: rollMsg, color: player.color };
             let roomWithLog = appendLogToRoom({ ...currentRoomForRoll, players: updatedPlayers, turn: nextTurn, gameStarted: true }, logEntry);
+            let winLogId = null;
             if (finalPosition === 100) {
-                const winEntry = { id: Math.random().toString(36).substring(2, 11), msg: `🏆 ${player.name} wins!`, color: '#ffd700' };
+                winLogId = Math.random().toString(36).substring(2, 11);
+                const winEntry = { id: winLogId, msg: `🏆 ${player.name} wins!`, color: '#ffd700' };
                 roomWithLog = appendLogToRoom(roomWithLog, winEntry);
             }
             await supabase.from('rooms').update({ data: roomWithLog }).eq('id', roomId);
-            channelRef.current.send({ type: 'broadcast', event: 'dice_rolled', payload: { diceValue, playerId: myPlayerId.current, name: player.name, startPosition, newPosition: finalPosition, isSpecial, specialType: isSpecial ? (finalPosition > newPos ? 'ladder' : 'snake') : null, shieldBlockedSnake: shieldBlocksSnake, nextTurn, loveCardIndex: loveCard, foundPowerCard: foundPower?.id || null } });
+            channelRef.current.send({ type: 'broadcast', event: 'dice_rolled', payload: { diceValue, playerId: myPlayerId.current, name: player.name, startPosition, newPosition: finalPosition, isSpecial, specialType: isSpecial ? (finalPosition > newPos ? 'ladder' : 'snake') : null, shieldBlockedSnake: shieldBlocksSnake, nextTurn, loveCardIndex: loveCard, foundPowerCard: foundPower?.id || null, logId: logEntry.id, winLogId } });
             if (finalPosition === 100) channelRef.current.send({ type: 'broadcast', event: 'game_over', payload: { winner: player.name } });
         }, 1200);
     };
@@ -528,6 +572,20 @@ export const useGameLogic = () => {
         const chatMessages = [...(roomData.chatMessages || []).slice(-99), msg];
         await supabase.from('rooms').update({ data: { ...roomData, chatMessages } }).eq('id', roomId);
     };
+    const shuffleCard = async () => {
+        const room = roomDataRef.current;
+        if (!room) return;
+        const activeCards = getActiveCards(room);
+        let queue = room.loveCardQueue?.length ? [...room.loveCardQueue] : shuffleDeck(activeCards);
+        const nextIndex = queue.shift();
+        if (queue.length === 0) queue = shuffleDeck(activeCards);
+        const updated = { ...room, loveCardQueue: queue };
+        setRoomData(updated);
+        await supabase.from('rooms').update({ data: updated }).eq('id', roomId);
+        const me = room.players.find(p => p.id === myPlayerId.current);
+        channelRef.current.send({ type: 'broadcast', event: 'card_shuffled', payload: { cardIndex: nextIndex, name: me?.name, color: me?.color } });
+    };
+
     const setDebugRoll = async (val) => {
         if (!roomData) return;
         const updated = { ...roomData, players: roomData.players.map(p => p.id === myPlayerId.current ? { ...p, nextRollGuaranteed: val } : p) };
@@ -547,6 +605,6 @@ export const useGameLogic = () => {
     };
 
     return {
-        roomId, setRoomId, playerName, setPlayerName, playerAvatar, setPlayerAvatar, playerColor, setPlayerColor, inRoom, roomData, isRolling, rollingPlayer, currentCard, setCurrentCard, winner, roomStatus, setRoomStatus, visualPositions, toasts, maxPlayersInput, setMaxPlayersInput, passwordInput, setPasswordInput, enteredPassword, setEnteredPassword, showPasswordPrompt, setShowPasswordPrompt, rollingValue, hasLanded, pendingPowerCard, setPendingPowerCard, targetSelection, setTargetSelection, hasRolledThisTurn, myPlayerId, joinRoom, rollDice, handlePowerCardChoice, onUseCardFromInventory, executePowerCard, copyRoomLink, setDebugRoll, setDebugTeleport, flashCard, powerEvent, isLuckyRoll, activeJump, logs, chatMessages, sendChat
+        roomId, setRoomId, playerName, setPlayerName, playerAvatar, setPlayerAvatar, playerColor, setPlayerColor, inRoom, roomData, isRolling, rollingPlayer, currentCard, setCurrentCard, winner, roomStatus, setRoomStatus, visualPositions, toasts, maxPlayersInput, setMaxPlayersInput, passwordInput, setPasswordInput, enteredPassword, setEnteredPassword, showPasswordPrompt, setShowPasswordPrompt, rollingValue, hasLanded, pendingPowerCard, setPendingPowerCard, targetSelection, setTargetSelection, hasRolledThisTurn, myPlayerId, joinRoom, rollDice, handlePowerCardChoice, onUseCardFromInventory, executePowerCard, copyRoomLink, setDebugRoll, setDebugTeleport, flashCard, powerEvent, isLuckyRoll, activeJump, logs, chatMessages, sendChat, shuffleCard
     };
 };

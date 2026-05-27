@@ -1,8 +1,9 @@
 import React from 'react';
-import { Heart, Zap } from 'lucide-react';
-import { FULL_BOARD_EXTRAS } from '../../configuration/gameConstants';
+import { Heart, Zap, Users } from 'lucide-react';
+import { FULL_BOARD_EXTRAS, FRIENDSHIP_BOARD_EXTRAS } from '../../configuration/gameConstants';
 
 const Board = ({ roomData, renderVisuals, activeJump, isMobile = false }) => {
+    const friendship = roomData?.isFriendship || false;
     const getSquareCoords = (pos, isJump = false, seed = 0) => {
         const row = Math.floor((pos - 1) / 10);
         const col = (pos - 1) % 10;
@@ -47,7 +48,7 @@ const Board = ({ roomData, renderVisuals, activeJump, isMobile = false }) => {
                 cells.push(
                     <div key={num} className="cell" style={{
                         position: 'relative',
-                        background: isLoveSquare ? 'rgba(255, 117, 143, 0.1)' : (isPowerSquare ? 'rgba(255, 183, 3, 0.1)' : 'transparent')
+                        background: isLoveSquare ? (friendship ? 'rgba(77,150,255,0.1)' : 'rgba(255,117,143,0.1)') : (isPowerSquare ? 'rgba(255, 183, 3, 0.1)' : 'transparent')
                     }}>
                         <span className="cell-number">{num}</span>
                         {isLoveSquare && (
@@ -57,10 +58,12 @@ const Board = ({ roomData, renderVisuals, activeJump, isMobile = false }) => {
                                 left: '50%',
                                 transform: 'translate(-50%, -50%)',
                                 opacity: 0.8,
-                                color: '#ff4d6d',
+                                color: friendship ? '#4d96ff' : '#ff4d6d',
                                 zIndex: 1
                             }}>
-                                <Heart fill="#ff4d6d" size={isMobile ? 20 : 30} />
+                                {friendship
+                                    ? <Users fill="#4d96ff" size={isMobile ? 20 : 30} />
+                                    : <Heart fill="#ff4d6d" size={isMobile ? 20 : 30} />}
                             </div>
                         )}
                         {isPowerSquare && (
@@ -351,7 +354,7 @@ const Board = ({ roomData, renderVisuals, activeJump, isMobile = false }) => {
     const renderJumps = () => {
         let ladderIdx = 0;
         let snakeIdx = 0;
-        const boardExtras = roomData?.FULL_BOARD_EXTRAS || FULL_BOARD_EXTRAS;
+        const boardExtras = friendship ? FRIENDSHIP_BOARD_EXTRAS : (roomData?.FULL_BOARD_EXTRAS || FULL_BOARD_EXTRAS);
 
         return (
             <svg viewBox="0 0 600 600" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 5, overflow: 'visible' }}>

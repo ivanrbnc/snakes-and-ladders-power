@@ -6,7 +6,15 @@ export const FULL_BOARD_EXTRAS = {
     26: 6, 46: 25, 50: 11, 58: 19, 65: 60, 74: 48, 89: 68, 92: 88, 96: 75, 97: 84, 99: 80
 };
 
-export const LDR_CARDS_USED = [
+export const FRIENDSHIP_BOARD_EXTRAS = {
+    // 🪜 Ladders
+    4: 18, 9: 31, 20: 45, 27: 52, 35: 68, 40: 63, 60: 80, 85: 95,
+
+    // 🐍 Snakes
+    17: 5, 44: 22, 52: 13, 61: 37, 67: 48, 76: 55, 88: 70, 93: 78, 95: 72, 98: 83, 99: 77
+};
+
+export const LDR_CARDS = [
     "What made you smile today? Show me that smile right now.",
     "Tell me one thing you miss about me… and point to where you feel it most.",
     "Set a timer. Plan your next date in 30 seconds.",
@@ -31,50 +39,37 @@ export const LDR_CARDS_USED = [
     "What are the little things that your partner makes you happy?",
     "What do you think are your strength as a partner?",
     "What do you think makes us 'click'?",
-    "If we were sharing this bed right now, where would your hands go first?",
     "Tell me one fantasy you've had about us in the last few days.",
-    "What would you do if your partner forbade you to do something you enjoy?",
+    "What would you do if your partner forbid you to do something you enjoy?",
     "Tell me about the time when you felt most jealous.",
     "What's one little habit of mine that secretly melts you? 🥰",
     "Play 10–15 seconds of the song that always puts you in the mood for me.",
     "What’s something I could do more often to support you?",
     "What’s the difference between this relationship and your past ones?",
-    "How do you feel of each other right now?"
-];
+    "How do you feel of each other right now?",
 
-export const LDR_CARDS = [
+    // New
     "Set a timer and fetch a pen and a paper. Draw a picture of each other. Go!",
-
-    "What made you smile today? Show me that smile right now.",
-    "What was the best part of your day?",
-    "What's a song that reminds you of us? Play a few seconds for me.",
-    "Give me your cutest look right now.",
-    "How do you see our relationship growing?",
-    "If we can't say anything to each other now, what will happen later, when we meet?",
-    "Describe the hug or cuddle you're craving from me most!",
 
     "Show me the view from your window right now. No filter.",
     "Do your best impression of me. Go.",
     "Find something near you that represents how you feel about us.",
     "Send me a voice message of you saying my name the way you say it when you miss me.",
-    "Show me the last photo on your camera roll you almost sent me but didn't.",
-    "In 10 seconds, write down every word that comes to mind when you think of me. Read them out loud.",
-    "Point the camera at the spot in your room where you think about me most.",
-    "Walk to your window and tell me what the sky looks like where you are.",
+    "Show me the last photo on your camera roll.",
+    "In 10 seconds, write down a word that comes to mind when you think of me. Read them out loud.",
+    "Walk to your window and tell me what the sky looks like.",
     "Recreate the face you make when you see my name pop up on your phone.",
     "Find something in your room that you'd want to give me. Tell me why.",
-    "Play 10 seconds of whatever's been stuck in your head today.",
-    "Take a picture right now and send it without context.",
+    "Play 30 seconds of whatever's been stuck in your head today.",
+    "Take a picture right now. Randomly.",
     "Show me your hands. What do they smell like right now?",
 
     "What part of your body misses me most right now?",
-    "Describe the exact moment you felt my absence hardest this week.",
-    "What's the one physical thing — texture, warmth, sound — that you miss most about being near me?",
+    "Describe the exact moment you felt my absence.",
+    "What's the one physical thing that you miss most about being near me?",
     "If you could teleport into my arms for exactly one hour, what time of day would you pick and why?",
-    "What do you do with your hands when you miss me?",
     "Describe the last dream you had where I was in it.",
-    "What's a small, ordinary thing I do that you catch yourself missing at random?",
-    "Where do you imagine us when you fall asleep?",
+    "What's a small, ordinary thing I do that you catch yourself missing?",
     "What scent or smell makes you think of me?",
     "Is there a word or phrase I say that you hear in your head sometimes?",
 
@@ -86,33 +81,25 @@ export const LDR_CARDS = [
     "What's a version of yourself that only I get to see?",
     "How do you feel when you close a call with me? Describe it honestly.",
     "What's something you're proud of this week that you haven't told me?",
-    "What does it feel like for you when we go too long without talking?",
     "What do you need from me right now that you haven't asked for?",
-    "What's something I've said that you've kept with you?",
     "When was the last time you cried about us? What was it about?",
-    "What's a part of yourself you've grown into since we've been together?",
-    "Tell me something you realized about yourself because of loving me.",
+
     "What's a promise you've made to yourself about us?",
 
-    "What was the exact moment you realized you were falling for me?",
     "What's the most random memory of us that still makes you warm inside?",
     "What's a tiny detail about our early conversations you still remember?",
-    "Tell me about a moment you wished we could have frozen in time.",
-    "What's a version of us from the past you miss, while still being grateful for now?",
+    "What's a version of us from the past that you miss?",
     "What's something we laughed about together that you still think about?",
-    "What was the first lie you told me? Even a small one.",
     "What's the moment you were most nervous around me?",
-    "What's a photo of us — real or imagined — that lives in your head rent-free?",
+
     "Tell me a story about us I don't know yet.",
 
-    "Describe the first 24 hours after we reunite. Hour by hour.",
     "What city in the world are you most excited to explore with me and why?",
-    "What's something mundane — groceries, laundry, cooking — you can't wait to do together?",
-    "What's a tradition you want us to build once we're in the same place?",
-    "If we moved in together tomorrow, what would your non-negotiables be?",
-    "What's a trip you've already half-planned in your head for us?",
+    "What's something ordinary you can't wait to do together?",
+    "What's a tradition you want us to build?",
+    "If we moved in together tomorrow, what would you feel?",
     "Describe the apartment or house you imagine us in five years from now.",
-    "What's the first meal you want to cook for me — not order, cook?",
+    "What's the first meal you want to cook for me — not order, but cook?",
     "What version of our future do you think about the most?",
     "What's something you're building right now that's partly for us?",
     "What kind of old couple do you think we'll be?",
@@ -120,25 +107,16 @@ export const LDR_CARDS = [
 
     "What's one thing you've learned about communication from being in this relationship?",
     "What do you think I need that I don't always ask for?",
-    "How have you changed since we started this?",
     "What's something I do that challenges you in a good way?",
     "What's a boundary you wish you had set earlier? Have you set it now?",
-    "What's a moment where I disappointed you and how did you get through it?",
     "What does trust look like to you in this relationship?",
     "What's something we've built together that makes you proud?",
     "What's a hard conversation you're glad we had?",
     "What's something you'd do differently if you could rewind six months?",
-    "What does love look like as a verb, not a feeling, for you?",
 
-    "Read me something — a message, a note, a line from anything — that made you think of me.",
     "Tell me what it felt like the first time I kissed you. Be specific.",
-    "What's a compliment you've thought about giving me but haven't?",
-    "What do you find irresistibly attractive about me that has nothing to do with how I look?",
+    "What do you find irresistibly attractive about me?",
     "Describe the version of me you find the most beautiful.",
-    "What are you wearing right now? Close your eyes. What would I do first?",
-    "Tell me one thing you want me to do to you the next time we're together.",
-    "What's a moment from our last time together that plays back to you?",
-    "What do you think about in the quiet moments right before you fall asleep?",
     "If you could write a letter to me that I'd only open at our reunion, what's one sentence in it?",
 
     "What animal are you right now, and why?",
@@ -149,29 +127,86 @@ export const LDR_CARDS = [
     "If someone wrote a book about us, what would the title be?",
     "If we had a signature dish, what would it be?",
     "Describe our relationship as a weather pattern.",
-    "What superpower would make this relationship easier, and which one would make it more fun?"
+    "What superpower would make this relationship easier, and which one would make it more fun?",
+
+    "Do you have a thought about us going into marriage?",
+    "What'll we our wedding dress?",
+    "What song will we dance to at our wedding?",
 ];
 
 export const TOTAL_LOVE_CARDS = LDR_CARDS.length;
 export const PLAYER_COLORS = ['#ff4d6d', '#4d96ff', '#52b788', '#ffb703', '#9b5de5', '#f15bb5'];
 
-/**
- * Generates squares evenly distributed across the board using segments.
- * This ensures no clustering and no overlap with snakes/ladders.
- */
-const generateDistributedSquares = (count, excludes = []) => {
+export const FRIENDSHIP_CARDS = [
+    // 🎉 Fun & Games
+    "Everyone does their best impression of another player. Vote for the winner!",
+    "The group has 60 seconds to come up with a team name and a group handshake. Go!",
+    "Everyone writes down their most embarrassing memory. Read them out loud, guess who's who.",
+    "Play 10 seconds of the song that best represents this friend group. Others guess who picked it.",
+    "Everyone points to who they think would survive a zombie apocalypse the longest. Explain why.",
+    "Two truths and a lie — everyone goes at the same time. Group tries to spot the lies.",
+    "The group has 30 seconds to rank themselves: funniest, most likely to be late, most chaotic. Discuss.",
+    "Everyone describes another player using only three emojis. Read them out loud.",
+
+    // 💬 Deep Talk
+    "What's one thing this friend group has taught you that you didn't expect?",
+    "What's a memory with this group that you think about more than the others know?",
+    "What's something you appreciate about each person here that you've never said out loud?",
+    "What's the most important thing this group has been through together?",
+    "What's something you were afraid to show this group at first, but now feel safe about?",
+    "What's a moment someone in this group surprised you in a really good way?",
+    "If you could freeze one moment you've shared with this group, which one would it be?",
+    "What's something you wish this group did more of together?",
+    "How has being in this friend group changed who you are?",
+    "What do you think this group will look like in 10 years?",
+
+    // 🔍 Would You Rather / Hypotheticals
+    "If this group was a TV show, what genre would it be, and who would be the main character?",
+    "If each person here had a superpower, what would it be? Everyone guesses each other's.",
+    "If the group had to go on a road trip with no plan, who would be the driver, the navigator, and the one who causes problems?",
+    "If this group had to survive on a deserted island, who does what? Assign roles.",
+    "If someone had to give a speech at your wedding, who in this group would you pick and why?",
+
+    // 🌱 Gratitude & Affirmation
+    "Go around and each person says one thing they genuinely admire about the person to their right.",
+    "Everyone shares one word that describes what this friend group means to them.",
+    "What's a time someone in this group showed up for you when it really mattered?",
+    "Tell someone in the group something kind that you've been meaning to say.",
+    "What's one thing you hope this group never loses?",
+
+    // 🎭 Challenges & Dares
+    "Everyone has 15 seconds to find the most random object near them. Tell a 30-second story using it.",
+    "The group must recreate a photo together — pick any memory and pose for it right now.",
+    "Everyone does their best impression of another player in the group. No mercy.",
+    "The whole group has to speak in a different accent for the next 2 minutes.",
+    "Each person shares the last photo in their camera roll. No deleting first.",
+];
+
+export const TOTAL_FRIENDSHIP_CARDS = FRIENDSHIP_CARDS.length;
+
+// All squares that are either a snake/ladder head OR destination — landing there teleports you away
+const getBoardBlockedSquares = (boardExtras) => {
+    const blocked = new Set();
+    for (const [from, to] of Object.entries(boardExtras)) {
+        blocked.add(parseInt(from)); // head/start — triggers teleport
+        blocked.add(parseInt(to));   // tail/destination — you arrive here, not a useful card spot
+    }
+    return blocked;
+};
+
+const generateDistributedSquares = (count, boardExtras, excludes = []) => {
     const squares = [];
     const segmentSize = 98 / count; // Board is 2-99
-    const excludeSet = new Set(excludes);
+    const blockedSquares = getBoardBlockedSquares(boardExtras);
+    const excludeSet = new Set([...excludes, ...blockedSquares]);
 
     for (let i = 0; i < count; i++) {
         const start = Math.floor(2 + (i * segmentSize));
         const end = Math.floor(2 + ((i + 1) * segmentSize));
 
-        // Find all possible valid squares in this segment
         const candidates = [];
         for (let s = start; s < end; s++) {
-            if (!FULL_BOARD_EXTRAS[s] && !excludeSet.has(s) && s < 100) {
+            if (!excludeSet.has(s) && s < 100) {
                 candidates.push(s);
             }
         }
@@ -179,9 +214,9 @@ const generateDistributedSquares = (count, excludes = []) => {
         if (candidates.length > 0) {
             squares.push(candidates[Math.floor(Math.random() * candidates.length)]);
         } else {
-            // Fallback: If segment is too crowded with snakes/ladders, search nearby
+            // Fallback: search nearby if segment is fully blocked
             let fallback = start;
-            while (fallback < 100 && (FULL_BOARD_EXTRAS[fallback] || excludeSet.has(fallback) || squares.includes(fallback))) {
+            while (fallback < 100 && (excludeSet.has(fallback) || squares.includes(fallback))) {
                 fallback++;
             }
             if (fallback < 100) squares.push(fallback);
@@ -190,12 +225,12 @@ const generateDistributedSquares = (count, excludes = []) => {
     return squares;
 };
 
-export const generateLoveSquares = () => {
-    return generateDistributedSquares(22);
+export const generateLoveSquares = (boardExtras = FULL_BOARD_EXTRAS) => {
+    return generateDistributedSquares(22, boardExtras);
 };
 
-export const generatePowerSquares = (loveSquares) => {
-    return generateDistributedSquares(20, loveSquares);
+export const generatePowerSquares = (loveSquares, boardExtras = FULL_BOARD_EXTRAS) => {
+    return generateDistributedSquares(24, boardExtras, loveSquares);
 };
 
 export const POWER_CARDS = [

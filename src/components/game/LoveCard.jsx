@@ -1,8 +1,8 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart } from 'lucide-react';
+import { Heart, Shuffle, Users } from 'lucide-react';
 
-const LoveCard = ({ currentCard, setCurrentCard }) => {
+const LoveCard = ({ currentCard, setCurrentCard, onShuffle, isFriendship }) => {
     return (
         <AnimatePresence>
             {currentCard && (
@@ -37,7 +37,7 @@ const LoveCard = ({ currentCard, setCurrentCard }) => {
                             alignItems: 'center',
                             maxWidth: '400px',
                             backgroundColor: 'white',
-                            border: '3px solid var(--primary)',
+                            border: `3px solid ${isFriendship ? '#4d96ff' : 'var(--primary)'}`,
                             borderRadius: '20px',
                             pointerEvents: 'all',
                         }}
@@ -46,11 +46,25 @@ const LoveCard = ({ currentCard, setCurrentCard }) => {
                             animate={{ scale: [1, 1.2, 1], rotate: [0, -8, 8, 0] }}
                             transition={{ duration: 0.6, delay: 0.3 }}
                         >
-                            <Heart fill="#ff4d6d" color="#ff4d6d" size={40} style={{ marginBottom: '20px' }} />
+                            {isFriendship
+                                ? <Users fill="#4d96ff" color="#4d96ff" size={40} style={{ marginBottom: '20px' }} />
+                                : <Heart fill="#ff4d6d" color="#ff4d6d" size={40} style={{ marginBottom: '20px' }} />}
                         </motion.div>
-                        <h2>Couple Challenge!</h2>
+                        <h2>{isFriendship ? 'Friend Challenge!' : 'Couple Challenge!'}</h2>
                         <p style={{ margin: '20px 0', fontSize: '1.2rem' }}>{currentCard}</p>
-                        <button className="btn" onClick={() => setCurrentCard(null)}>Done! ❤️</button>
+                        <div style={{ display: 'flex', gap: '10px' }}>
+                            <button className="btn" onClick={() => setCurrentCard(null)}>{isFriendship ? 'Done! 🤝' : 'Done! ❤️'}</button>
+                            {onShuffle && (
+                                <button
+                                    className="btn"
+                                    onClick={onShuffle}
+                                    style={{ background: isFriendship ? 'rgba(77,150,255,0.1)' : 'rgba(255,77,109,0.1)', color: isFriendship ? '#4d96ff' : '#ff4d6d', boxShadow: 'none' }}
+                                    title="Get a different card"
+                                >
+                                    <Shuffle size={16} />
+                                </button>
+                            )}
+                        </div>
                     </motion.div>
                 </motion.div>
             )}

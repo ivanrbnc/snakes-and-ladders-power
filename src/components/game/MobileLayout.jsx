@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Users, Zap, ScrollText, MessageCircle } from 'lucide-react';
 
 const TABS = [
@@ -8,8 +8,23 @@ const TABS = [
     { id: 'chat',    label: 'Chat',    icon: MessageCircle },
 ];
 
-const MobileLayout = ({ board, gamePanel, powerInventory, gameLog, gameChat, rollButton, onCopyLink }) => {
+const MobileLayout = ({ board, gamePanel, powerInventory, gameLog, gameChat, rollButton, onCopyLink, chatMessages }) => {
     const [activeTab, setActiveTab] = useState('players');
+    const [unreadChat, setUnreadChat] = useState(0);
+    const prevMessageCount = useRef(0);
+
+    useEffect(() => {
+        const count = chatMessages?.length || 0;
+        if (activeTab !== 'chat' && count > prevMessageCount.current) {
+            setUnreadChat(prev => prev + (count - prevMessageCount.current));
+        }
+        prevMessageCount.current = count;
+    }, [chatMessages, activeTab]);
+
+    const handleTabClick = (id) => {
+        setActiveTab(id);
+        if (id === 'chat') setUnreadChat(0);
+    };
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', height: '100dvh', overflow: 'hidden', position: 'fixed', inset: 0 }}>
@@ -29,7 +44,7 @@ const MobileLayout = ({ board, gamePanel, powerInventory, gameLog, gameChat, rol
                 {TABS.map(({ id, label, icon: Icon }) => (
                     <button
                         key={id}
-                        onClick={() => setActiveTab(id)}
+                        onClick={() => handleTabClick(id)}
                         style={{
                             flex: 1, padding: '6px 0', border: 'none', background: 'none',
                             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px',
@@ -39,9 +54,20 @@ const MobileLayout = ({ board, gamePanel, powerInventory, gameLog, gameChat, rol
                             fontSize: '0.65rem',
                             borderBottom: activeTab === id ? '2px solid #ff4d6d' : '2px solid transparent',
                             transition: 'all 0.15s',
+                            position: 'relative',
                         }}
                     >
-                        <Icon size={14} />
+                        <div style={{ position: 'relative' }}>
+                            <Icon size={14} />
+                            {id === 'chat' && unreadChat > 0 && (
+                                <span style={{
+                                    position: 'absolute', top: '-3px', right: '-5px',
+                                    background: '#ff4d6d',
+                                    borderRadius: '50%',
+                                    width: '8px', height: '8px',
+                                }} />
+                            )}
+                        </div>
                         {label}
                     </button>
                 ))}
@@ -58,7 +84,7 @@ const MobileLayout = ({ board, gamePanel, powerInventory, gameLog, gameChat, rol
                                 <button
                                     className="btn love-btn"
                                     onClick={onCopyLink}
-                                    style={{ marginTop: '14px', background: 'rgba(255,77,109,0.1)', color: '#ff4d6d', fontSize: '0.88rem', padding: '8px 20px', width: 'fit-content' }}
+                                    style={{ marginTop: '14px', background: 'transparent', color: 'var(--primary)', border: '1.5px solid var(--primary)', fontSize: '0.88rem', padding: '8px 20px', width: 'fit-content' }}
                                 >
                                     Copy Invitation Link
                                 </button>

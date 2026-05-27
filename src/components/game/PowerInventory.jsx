@@ -96,7 +96,7 @@ const PowerInventory = ({ players, myPlayerId, onUseCard, isMyTurn, disabled, is
                 }
                 .empty-msg {
                     font-size: 0.9rem;
-                    color: #ff4d6d;
+                    color: var(--primary);
                     text-align: center;
                     padding: 10px 0;
                     font-style: italic;

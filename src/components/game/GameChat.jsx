@@ -30,7 +30,7 @@ const GameChat = ({ messages, onSend, myPlayerId, players, isMobile }) => {
 
             <div style={{ overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '6px', minHeight: 0, overflow: 'hidden auto', paddingRight: '4px', marginRight: '-4px' }}>
                 {messages.length === 0 && (
-                    <span style={{ fontSize: '0.9rem', color: '#ff4d6d', fontStyle: 'italic', fontWeight: 600, textAlign: 'center', padding: '10px 0', display: 'block' }}>Say something! 💬</span>
+                    <span style={{ fontSize: '0.9rem', color: 'var(--primary)', fontStyle: 'italic', fontWeight: 600, textAlign: 'center', padding: '10px 0', display: 'block' }}>Say something! 💬</span>
                 )}
                 {messages.map((msg) => {
                     const isMe = msg.playerId === myPlayerId;
@@ -95,8 +95,9 @@ const GameChat = ({ messages, onSend, myPlayerId, players, isMobile }) => {
                         title="Send a GIF"
                         style={{
                             flexShrink: 0, width: '34px', height: '34px', borderRadius: '50%',
-                            background: showGifPicker ? '#ff4d6d' : 'rgba(255,77,109,0.1)',
-                            color: showGifPicker ? 'white' : '#ff4d6d',
+                            background: showGifPicker ? 'var(--primary)' : 'transparent',
+                            color: showGifPicker ? 'white' : 'var(--primary)',
+                            border: showGifPicker ? 'none' : '1.5px solid var(--primary)',
                             border: 'none', fontSize: '0.75rem', fontWeight: 800,
                             cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
                             fontFamily: "'Outfit', sans-serif", transition: 'all 0.15s',
@@ -120,11 +121,11 @@ const GameChat = ({ messages, onSend, myPlayerId, players, isMobile }) => {
                         onClick={submit}
                         style={{
                             flexShrink: 0, width: '34px', height: '34px', borderRadius: '50%',
-                            background: '#ff4d6d', color: 'white', border: 'none',
+                            background: 'var(--primary)', color: 'white', border: 'none',
                             fontSize: '0.9rem', cursor: 'pointer', display: 'flex',
                             alignItems: 'center', justifyContent: 'center',
                             paddingLeft: '2px', paddingBottom: '1px',
-                            boxShadow: '0 2px 6px rgba(255,77,109,0.4)',
+                            boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
                         }}
                     >
                         ➤
