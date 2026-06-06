@@ -98,7 +98,7 @@ const GameChat = ({ messages, onSend, myPlayerId, players, isMobile }) => {
                             background: showGifPicker ? 'var(--primary)' : 'transparent',
                             color: showGifPicker ? 'white' : 'var(--primary)',
                             border: showGifPicker ? 'none' : '1.5px solid var(--primary)',
-                            border: 'none', fontSize: '0.75rem', fontWeight: 800,
+                            fontSize: '0.75rem', fontWeight: 800,
                             cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
                             fontFamily: "'Outfit', sans-serif", transition: 'all 0.15s',
                         }}
