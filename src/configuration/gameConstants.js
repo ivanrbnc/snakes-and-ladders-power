@@ -7,11 +7,11 @@ export const FULL_BOARD_EXTRAS = {
 };
 
 export const FRIENDSHIP_BOARD_EXTRAS = {
-    // 🪜 Ladders
-    4: 18, 9: 31, 20: 45, 27: 52, 35: 68, 40: 63, 60: 80, 85: 95,
+    // 🪜 Ladders (progression boost)
+    5: 23, 11: 31, 15: 47, 42: 63, 49: 68, 62: 78, 73: 94,
 
-    // 🐍 Snakes
-    17: 5, 44: 22, 52: 13, 61: 37, 67: 48, 76: 55, 88: 70, 93: 78, 95: 72, 98: 83, 99: 77
+    // 🐍 Snakes (punishment)
+    18: 1, 28: 7, 33: 10, 43: 22, 57: 25, 89: 51, 96: 86, 97: 55, 99:80,
 };
 
 export const LDR_CARDS = [
