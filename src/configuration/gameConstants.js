@@ -132,6 +132,13 @@ export const LDR_CARDS = [
     "Do you have a thought about us going into marriage?",
     "What'll we our wedding dress?",
     "What song will we dance to at our wedding?",
+
+    // Personals
+    "If someone tried to imitate me, what's one thing they could never fake?",
+    "What's something you assumed about me at first that turned out to be totally wrong?",
+    "Who's more likely to be confidently wrong in an argument?",
+    "If I got arrested, what would your first guess and why?",
+    "What's your favorite chaotic thing about us?",
 ];
 
 export const TOTAL_LOVE_CARDS = LDR_CARDS.length;
